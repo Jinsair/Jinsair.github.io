@@ -39,4 +39,67 @@
     
   </entry>
   
+  <entry>
+    <title>macOS Catalina 10.15 安装 CocoaPods 步骤</title>
+    <link href="http://yoursite.com/2020/03/24/macOS%20Catalina%2010.15%20%E5%AE%89%E8%A3%85%20CocoaPods%20%E6%AD%A5%E9%AA%A4/"/>
+    <id>http://yoursite.com/2020/03/24/macOS%20Catalina%2010.15%20%E5%AE%89%E8%A3%85%20CocoaPods%20%E6%AD%A5%E9%AA%A4/</id>
+    <published>2020-03-23T17:05:03.000Z</published>
+    <updated>2020-07-23T17:17:55.528Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
+&lt;!-- toc --&gt;
+
+&lt;ul&gt;
+&lt;li&gt;先查看下电脑上的 CocoaPods 版本&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td
+        
+      
+    
+    </summary>
+    
+    
+      <category term="CocoaPods" scheme="http://yoursite.com/categories/CocoaPods/"/>
+    
+    
+      <category term="iOS" scheme="http://yoursite.com/tags/iOS/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>给UIView添加阴影的正确方式</title>
+    <link href="http://yoursite.com/2016/04/21/%E7%BB%99UIView%E6%B7%BB%E5%8A%A0%E9%98%B4%E5%BD%B1%E7%9A%84%E6%AD%A3%E7%A1%AE%E6%96%B9%E5%BC%8F/"/>
+    <id>http://yoursite.com/2016/04/21/%E7%BB%99UIView%E6%B7%BB%E5%8A%A0%E9%98%B4%E5%BD%B1%E7%9A%84%E6%AD%A3%E7%A1%AE%E6%96%B9%E5%BC%8F/</id>
+    <published>2016-04-21T05:05:03.000Z</published>
+    <updated>2020-07-23T17:17:11.193Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
+&lt;!-- toc --&gt;
+
+&lt;h2 id=&quot;1-纯代码&quot;&gt;&lt;a href=&quot;#1-纯代码&quot; class=&quot;headerlink&quot; title=&quot;1.纯代码&quot;&gt;&lt;/a&gt;1.纯代码&lt;/h2&gt;&lt;figure class=&quot;highlight
+        
+      
+    
+    </summary>
+    
+    
+      <category term="iOS" scheme="http://yoursite.com/categories/iOS/"/>
+    
+    
+      <category term="CALayer" scheme="http://yoursite.com/tags/CALayer/"/>
+    
+  </entry>
+  
 </feed>
