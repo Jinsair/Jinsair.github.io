@@ -5,7 +5,7 @@
   
 
 
-<html class="theme-next gemini use-motion" lang="zh-Hans">
+<html class="theme-next pisces use-motion" lang="zh-Hans">
 <head>
   <meta charset="UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -94,7 +94,7 @@
   var NexT = window.NexT || {};
   var CONFIG = {
     root: '/',
-    scheme: 'Gemini',
+    scheme: 'Pisces',
     version: '5.1.4',
     sidebar: {"position":"left","display":"always","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
     fancybox: true,
@@ -189,7 +189,7 @@
       
         
         <li class="menu-item menu-item-about">
-          <a href="/about/" rel="section">
+          <a href="/about/%20" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
             
@@ -199,7 +199,7 @@
       
         
         <li class="menu-item menu-item-tags">
-          <a href="/tags/" rel="section">
+          <a href="/tags/%20" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
             
@@ -209,7 +209,7 @@
       
         
         <li class="menu-item menu-item-categories">
-          <a href="/categories/" rel="section">
+          <a href="/categories/%20" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
             
@@ -219,7 +219,7 @@
       
         
         <li class="menu-item menu-item-archives">
-          <a href="/archives/" rel="section">
+          <a href="/archives/%20" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
             
@@ -394,43 +394,27 @@
       
         
           
-            <a id="more"></a>
-<!-- toc -->
-
-<ul>
-<li>先查看下电脑上的 CocoaPods 版本</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pod --version</span><br></pre></td></tr></table></figure>
-<p>输出：zsh: command not found: pod  好的 你果然没有安装CocoaPods</p>
-<ul>
-<li>查看下ruby版本</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ruby -v</span><br></pre></td></tr></table></figure>
-<p>输出：ruby 2.6.3p62 (2019-04-16 revision 67580) [universal.x86_64-darwin19]</p>
-<ul>
-<li>查看当前安装的gem源</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gem sources -l</span><br></pre></td></tr></table></figure>
-<p>输出：<br><strong>* CURRENT SOURCES *</strong><br><a href="https://rubygems.org/" target="_blank" rel="noopener">https://rubygems.org/</a></p>
-<ul>
-<li>移除原有的源</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gem sources --remove https:&#x2F;&#x2F;rubygems.org&#x2F;</span><br></pre></td></tr></table></figure>
-
-<p>输出：<a href="https://rubygems.org/" target="_blank" rel="noopener">https://rubygems.org/</a> removed from sources<br>移除成功</p>
-<ul>
-<li>添加ruby-china的源</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gem sources -a https:&#x2F;&#x2F;gems.ruby-china.com&#x2F;</span><br></pre></td></tr></table></figure>
-<p>输出：<a href="https://gems.ruby-china.com/" target="_blank" rel="noopener">https://gems.ruby-china.com/</a> added to sources<br>添加成功</p>
-<ul>
-<li>安装</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo gem install cocoapods</span><br></pre></td></tr></table></figure>
-
-<p>输出结果：… 32 gems installed.<br>安装完成</p>
-
           
+
+
+
+先查看下电脑上的 CocoaPods 版本
+
+1pod --version
+输出：zsh: command not found: pod  好的 你果然没有安装CocoaPods
+
+查看下ruby版本
+
+1ruby -v
+输出：ruby 2.6.3p62 (2019-04-16 revisi
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2020/03/24/macOS%20Catalina%2010.15%20%E5%AE%89%E8%A3%85%20CocoaPods%20%E6%AD%A5%E9%AA%A4/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -572,23 +556,18 @@
       
         
           
-            <a id="more"></a>
-<!-- toc -->
-
-<h2 id="1-纯代码"><a href="#1-纯代码" class="headerlink" title="1.纯代码"></a>1.纯代码</h2><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// 基本设置 </span></span><br><span class="line"><span class="type">CALayer</span> *layer = [view layer];</span><br><span class="line"><span class="comment">/// 阴影半径，默认为3.</span></span><br><span class="line">layer.shadowRadius = <span class="number">5.0</span>;</span><br><span class="line"><span class="comment">/// 阴影偏移量，默认为(0, -3).</span></span><br><span class="line"><span class="comment">/// x右、y下、-x左、-y上、(0, 0)为四边都有阴影.</span></span><br><span class="line">layer.shadowOffset = <span class="type">CGSizeMake</span>(<span class="number">0</span>, <span class="number">3</span>);</span><br><span class="line"><span class="comment">/// 阴影颜色，默认为黑色.</span></span><br><span class="line">layer.shadowColor = [<span class="type">UIColor</span> blackColor].<span class="type">CGColor</span>;</span><br><span class="line"><span class="comment">/// 阴影透明度，默认为0.</span></span><br><span class="line">layer.shadowOpacity = <span class="number">0.5</span>; </span><br><span class="line"><span class="comment">/// 用于构造层阴影的轮廓，能够提高性能</span></span><br><span class="line">view.layer.shadowPath = [[<span class="type">UIBezierPath</span> bezierPathWithRect:view.bounds] <span class="type">CGPath</span>];</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>当没有设置<code>layer.shadowPath</code>的时候，可以通过打开<br><code>Xcode---&gt;Debug---&gt;View Debugging---&gt;Rendering---&gt;Color Offscreen-Rendered Yellow</code><br>查看到当前设置阴影的view有一层黄色蒙板，也就是当前view已经产生离屏渲染了 </li>
-<li>设置了<code>layer.shadowPath</code>后，性能有所提高，建议使用</li>
-</ul>
-<h2 id="2-xib"><a href="#2-xib" class="headerlink" title="2.xib"></a>2.xib</h2><p>可以利用Runtime和KVC在xib中设置相关属性<br>选中xib文件中的view，右侧可以设置：<br><img src="https://i.loli.net/2020/06/22/LFKY9R8jbzoxIrP.png" alt="xib config.png"></p>
-<p>⚠️上图中已经将shadowColor替换成了自定义的shadowUIColor，因为这里只能设置UIColor而不是CGColorRef，同理borderColor也是如此</p>
-<p>为CALayer添加Category，新增2个属性解决上面的问题</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// CALayer+Extension.h</span></span><br><span class="line">@interface <span class="type">CALayer</span> (<span class="type">Extension</span>)</span><br><span class="line"><span class="comment">/// 自定义属性：边框颜色</span></span><br><span class="line">@property (nonatomic, strong) <span class="type">UIColor</span> *borderUIColor;</span><br><span class="line"><span class="comment">/// 自定义属性：阴影颜色</span></span><br><span class="line">@property (nonatomic, strong) <span class="type">UIColor</span> *shadowUIColor;</span><br><span class="line"></span><br><span class="line">@end</span><br><span class="line"></span><br><span class="line"><span class="comment">/// CALayer+Extension.m 重写Setter和Getter</span></span><br><span class="line">@implementation <span class="type">CALayer</span> (<span class="type">Extension</span>)</span><br><span class="line"></span><br><span class="line">- (void)setBorderUIColor:(<span class="type">UIColor</span> *)borderUIColor &#123;</span><br><span class="line">    <span class="keyword">self</span>.borderColor = borderUIColor.<span class="type">CGColor</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="type">UIColor</span> *)borderUIColor &#123;</span><br><span class="line">    <span class="keyword">return</span> [<span class="type">UIColor</span> colorWithCGColor:<span class="keyword">self</span>.borderColor];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (void)setShadowUIColor:(<span class="type">UIColor</span> *)shadowUIColor &#123;</span><br><span class="line">    <span class="keyword">self</span>.shadowColor = shadowUIColor.<span class="type">CGColor</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="type">UIColor</span> *)shadowUIColor &#123;</span><br><span class="line">    <span class="keyword">return</span> [<span class="type">UIColor</span> colorWithCGColor:<span class="keyword">self</span>.shadowColor];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">@end</span><br></pre></td></tr></table></figure>
-
-<p>try try?</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">layer.shadowColor = [<span class="built_in">UIColor</span> colorWithWhite:<span class="number">0</span> alpha:<span class="number">0.2</span>].CGColor;</span><br><span class="line">layer.shadowOffset = <span class="built_in">CGSizeMake</span>(<span class="number">0</span>,<span class="number">0</span>);</span><br><span class="line">layer.shadowOpacity = <span class="number">1.0</span>f;</span><br><span class="line">layer.shadowRadius  = <span class="number">12</span>;</span><br></pre></td></tr></table></figure>
           
+
+
+1.纯代码12345678910111213/// 基本设置 CALayer *layer = [view layer];/// 阴影半径，默认为3.layer.shadowRadius = 5.0;/// 阴影偏移量，默认为(0, -3)./// x右、y下、-x左、-y上、(0, 0)为四
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2016/04/21/%E7%BB%99UIView%E6%B7%BB%E5%8A%A0%E9%98%B4%E5%BD%B1%E7%9A%84%E6%AD%A3%E7%A1%AE%E6%96%B9%E5%BC%8F/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -670,7 +649,7 @@
             
               <div class="site-state-item site-state-posts">
               
-                <a href="/archives/%7C%7C%20archive">
+                <a href="/archives/%20%7C%7C%20archive">
               
                   <span class="site-state-item-count">3</span>
                   <span class="site-state-item-name">日志</span>
@@ -682,10 +661,10 @@
               
               
               <div class="site-state-item site-state-categories">
-                
+                <a href="/categories/index.html">
                   <span class="site-state-item-count">2</span>
                   <span class="site-state-item-name">分类</span>
-                
+                </a>
               </div>
             
 
@@ -693,10 +672,10 @@
               
               
               <div class="site-state-item site-state-tags">
-                
+                <a href="/tags/index.html">
                   <span class="site-state-item-count">2</span>
                   <span class="site-state-item-name">标签</span>
-                
+                </a>
               </div>
             
 
@@ -711,6 +690,22 @@
             </div>
           
 
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/jinsair" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:connect.xin@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
           
 
           
@@ -756,7 +751,7 @@
 
 
 
-  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
 
 
 <div>
