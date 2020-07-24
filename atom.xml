@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-07-19T16:15:03.132Z</updated>
+  <updated>2020-07-23T23:10:44.865Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -17,58 +17,49 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>Hello World</title>
-    <link href="http://yoursite.com/2020/07/20/hello-world/"/>
-    <id>http://yoursite.com/2020/07/20/hello-world/</id>
-    <published>2020-07-19T16:15:03.132Z</published>
-    <updated>2020-07-19T16:15:03.132Z</updated>
+    <title>macOS Catalina 10.15 安装 CocoaPods 步骤</title>
+    <link href="http://yoursite.com/2020/03/24/macOS-Catalina-10-15-%E5%AE%89%E8%A3%85-CocoaPods-%E6%AD%A5%E9%AA%A4/"/>
+    <id>http://yoursite.com/2020/03/24/macOS-Catalina-10-15-%E5%AE%89%E8%A3%85-CocoaPods-%E6%AD%A5%E9%AA%A4/</id>
+    <published>2020-03-23T23:09:46.000Z</published>
+    <updated>2020-07-23T23:10:44.865Z</updated>
     
     <summary type="html">
     
-      
-      
-        
-        
-          &lt;p&gt;Welcome to &lt;a href=&quot;https://hexo.io/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Hexo&lt;/a&gt;! This is your very first post. Check &lt;a
-        
-      
+      &lt;!-- toc --&gt;
+
+&lt;h2 id=&quot;先查看下电脑上的-CocoaPods-版本&quot;&gt;&lt;a href=&quot;#先查看下电脑上的-CocoaPods-版本&quot; class=&quot;headerlink&quot; title=&quot;先查看下电脑上的 CocoaPods 版本&quot;&gt;&lt;/a&gt;先查看下电脑上的 CocoaPods 版本&lt;/h2&gt;&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;pod --version&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;输出：zsh: command not found: pod  好的 你果然没有安装CocoaPods&lt;/p&gt;
     
     </summary>
     
     
+      <category term="iOS" scheme="http://yoursite.com/categories/iOS/"/>
+    
+    
+      <category term="CocoaPods" scheme="http://yoursite.com/tags/CocoaPods/"/>
     
   </entry>
   
   <entry>
-    <title>macOS Catalina 10.15 安装 CocoaPods 步骤</title>
-    <link href="http://yoursite.com/2020/03/24/macOS%20Catalina%2010.15%20%E5%AE%89%E8%A3%85%20CocoaPods%20%E6%AD%A5%E9%AA%A4/"/>
-    <id>http://yoursite.com/2020/03/24/macOS%20Catalina%2010.15%20%E5%AE%89%E8%A3%85%20CocoaPods%20%E6%AD%A5%E9%AA%A4/</id>
-    <published>2020-03-23T17:05:03.000Z</published>
-    <updated>2020-07-23T17:17:55.528Z</updated>
+    <title>Cocoa 集合类型：NSPointerArray，NSMapTable，NSHashTable</title>
+    <link href="http://yoursite.com/2017/08/24/Cocoa%E9%9B%86%E5%90%88%E7%B1%BB%E5%9E%8B%EF%BC%9ANSPointerArra%E3%80%81NSMapTable%E3%80%81NSHashTable/"/>
+    <id>http://yoursite.com/2017/08/24/Cocoa%E9%9B%86%E5%90%88%E7%B1%BB%E5%9E%8B%EF%BC%9ANSPointerArra%E3%80%81NSMapTable%E3%80%81NSHashTable/</id>
+    <published>2017-08-24T06:19:32.000Z</published>
+    <updated>2020-07-24T13:47:02.778Z</updated>
     
     <summary type="html">
     
-      
-      
-        
-        
-          &lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
-&lt;!-- toc --&gt;
+      &lt;!-- toc --&gt;
 
-&lt;ul&gt;
-&lt;li&gt;先查看下电脑上的 CocoaPods 版本&lt;/li&gt;
-&lt;/ul&gt;
-&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td
-        
-      
+&lt;p&gt;在iOS6之后新增了NSPointerArray，NSMapTable，NSHashTable三种集合，分别拓展了NSArray、NSDictionary、NSSet的功能。&lt;/p&gt;
     
     </summary>
     
     
-      <category term="CocoaPods" scheme="http://yoursite.com/categories/CocoaPods/"/>
+      <category term="Objective-C" scheme="http://yoursite.com/categories/Objective-C/"/>
     
     
-      <category term="iOS" scheme="http://yoursite.com/tags/iOS/"/>
+      <category term="集合" scheme="http://yoursite.com/tags/%E9%9B%86%E5%90%88/"/>
     
   </entry>
   
@@ -77,20 +68,13 @@
     <link href="http://yoursite.com/2016/04/21/%E7%BB%99UIView%E6%B7%BB%E5%8A%A0%E9%98%B4%E5%BD%B1%E7%9A%84%E6%AD%A3%E7%A1%AE%E6%96%B9%E5%BC%8F/"/>
     <id>http://yoursite.com/2016/04/21/%E7%BB%99UIView%E6%B7%BB%E5%8A%A0%E9%98%B4%E5%BD%B1%E7%9A%84%E6%AD%A3%E7%A1%AE%E6%96%B9%E5%BC%8F/</id>
     <published>2016-04-21T05:05:03.000Z</published>
-    <updated>2020-07-23T17:17:11.193Z</updated>
+    <updated>2020-07-23T23:03:09.573Z</updated>
     
     <summary type="html">
     
-      
-      
-        
-        
-          &lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
-&lt;!-- toc --&gt;
+      &lt;!-- toc --&gt;
 
-&lt;h2 id=&quot;1-纯代码&quot;&gt;&lt;a href=&quot;#1-纯代码&quot; class=&quot;headerlink&quot; title=&quot;1.纯代码&quot;&gt;&lt;/a&gt;1.纯代码&lt;/h2&gt;&lt;figure class=&quot;highlight
-        
-      
+&lt;h2 id=&quot;1-纯代码&quot;&gt;&lt;a href=&quot;#1-纯代码&quot; class=&quot;headerlink&quot; title=&quot;1.纯代码&quot;&gt;&lt;/a&gt;1.纯代码&lt;/h2&gt;&lt;figure class=&quot;highlight swift&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;/// 基本设置 &lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;type&quot;&gt;CALayer&lt;/span&gt; *layer = [view layer];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;/// 阴影半径，默认为3.&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;layer.shadowRadius = &lt;span class=&quot;number&quot;&gt;5.0&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;/// 阴影偏移量，默认为(0, -3).&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;/// x右、y下、-x左、-y上、(0, 0)为四边都有阴影.&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;layer.shadowOffset = &lt;span class=&quot;type&quot;&gt;CGSizeMake&lt;/span&gt;(&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;/// 阴影颜色，默认为黑色.&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;layer.shadowColor = [&lt;span class=&quot;type&quot;&gt;UIColor&lt;/span&gt; blackColor].&lt;span class=&quot;type&quot;&gt;CGColor&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;/// 阴影透明度，默认为0.&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;layer.shadowOpacity = &lt;span class=&quot;number&quot;&gt;0.5&lt;/span&gt;; &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;/// 用于构造层阴影的轮廓，能够提高性能&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;view.layer.shadowPath = [[&lt;span class=&quot;type&quot;&gt;UIBezierPath&lt;/span&gt; bezierPathWithRect:view.bounds] &lt;span class=&quot;type&quot;&gt;CGPath&lt;/span&gt;];&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
     
     </summary>
     

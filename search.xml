@@ -2,57 +2,41 @@
 <search>
   <entry>
     <title>macOS Catalina 10.15 安装 CocoaPods 步骤</title>
-    <url>/2020/03/24/macOS%20Catalina%2010.15%20%E5%AE%89%E8%A3%85%20CocoaPods%20%E6%AD%A5%E9%AA%A4/</url>
-    <content><![CDATA[<a id="more"></a>
-<!-- toc -->
+    <url>/2020/03/24/macOS-Catalina-10-15-%E5%AE%89%E8%A3%85-CocoaPods-%E6%AD%A5%E9%AA%A4/</url>
+    <content><![CDATA[<!-- toc -->
 
-<ul>
-<li>先查看下电脑上的 CocoaPods 版本</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">pod --version</span><br></pre></td></tr></table></figure>
+<h2 id="先查看下电脑上的-CocoaPods-版本"><a href="#先查看下电脑上的-CocoaPods-版本" class="headerlink" title="先查看下电脑上的 CocoaPods 版本"></a>先查看下电脑上的 CocoaPods 版本</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">pod --version</span><br></pre></td></tr></table></figure>
 <p>输出：zsh: command not found: pod  好的 你果然没有安装CocoaPods</p>
-<ul>
-<li>查看下ruby版本</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ruby -v</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+
+<h2 id="查看下ruby版本"><a href="#查看下ruby版本" class="headerlink" title="查看下ruby版本"></a>查看下ruby版本</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ruby -v</span><br></pre></td></tr></table></figure>
 <p>输出：ruby 2.6.3p62 (2019-04-16 revision 67580) [universal.x86_64-darwin19]</p>
-<ul>
-<li>查看当前安装的gem源</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">gem sources -l</span><br></pre></td></tr></table></figure>
+<h2 id="查看当前安装的gem源"><a href="#查看当前安装的gem源" class="headerlink" title="查看当前安装的gem源"></a>查看当前安装的gem源</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">gem sources -l</span><br></pre></td></tr></table></figure>
 <p>输出：<br><strong>* CURRENT SOURCES *</strong><br><a href="https://rubygems.org/" target="_blank" rel="noopener">https://rubygems.org/</a></p>
-<ul>
-<li>移除原有的源</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">gem sources --remove https:&#x2F;&#x2F;rubygems.org&#x2F;</span><br></pre></td></tr></table></figure>
+<h2 id="移除原有的源"><a href="#移除原有的源" class="headerlink" title="移除原有的源"></a>移除原有的源</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">gem sources --remove https:&#x2F;&#x2F;rubygems.org&#x2F;</span><br></pre></td></tr></table></figure>
 
 <p>输出：<a href="https://rubygems.org/" target="_blank" rel="noopener">https://rubygems.org/</a> removed from sources<br>移除成功</p>
-<ul>
-<li>添加ruby-china的源</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">gem sources -a https:&#x2F;&#x2F;gems.ruby-china.com&#x2F;</span><br></pre></td></tr></table></figure>
+<h2 id="添加ruby-china的源"><a href="#添加ruby-china的源" class="headerlink" title="添加ruby-china的源"></a>添加ruby-china的源</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">gem sources -a https:&#x2F;&#x2F;gems.ruby-china.com&#x2F;</span><br></pre></td></tr></table></figure>
 <p>输出：<a href="https://gems.ruby-china.com/" target="_blank" rel="noopener">https://gems.ruby-china.com/</a> added to sources<br>添加成功</p>
-<ul>
-<li>安装</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo gem install cocoapods</span><br></pre></td></tr></table></figure>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo gem install cocoapods</span><br></pre></td></tr></table></figure>
 
 <p>输出结果：… 32 gems installed.<br>安装完成</p>
 ]]></content>
       <categories>
-        <category>CocoaPods</category>
+        <category>iOS</category>
       </categories>
       <tags>
-        <tag>iOS</tag>
+        <tag>CocoaPods</tag>
       </tags>
   </entry>
   <entry>
     <title>给UIView添加阴影的正确方式</title>
     <url>/2016/04/21/%E7%BB%99UIView%E6%B7%BB%E5%8A%A0%E9%98%B4%E5%BD%B1%E7%9A%84%E6%AD%A3%E7%A1%AE%E6%96%B9%E5%BC%8F/</url>
-    <content><![CDATA[<a id="more"></a>
-<!-- toc -->
+    <content><![CDATA[<!-- toc -->
 
 <h2 id="1-纯代码"><a href="#1-纯代码" class="headerlink" title="1.纯代码"></a>1.纯代码</h2><figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">/// 基本设置 </span></span><br><span class="line"><span class="type">CALayer</span> *layer = [view layer];</span><br><span class="line"><span class="comment">/// 阴影半径，默认为3.</span></span><br><span class="line">layer.shadowRadius = <span class="number">5.0</span>;</span><br><span class="line"><span class="comment">/// 阴影偏移量，默认为(0, -3).</span></span><br><span class="line"><span class="comment">/// x右、y下、-x左、-y上、(0, 0)为四边都有阴影.</span></span><br><span class="line">layer.shadowOffset = <span class="type">CGSizeMake</span>(<span class="number">0</span>, <span class="number">3</span>);</span><br><span class="line"><span class="comment">/// 阴影颜色，默认为黑色.</span></span><br><span class="line">layer.shadowColor = [<span class="type">UIColor</span> blackColor].<span class="type">CGColor</span>;</span><br><span class="line"><span class="comment">/// 阴影透明度，默认为0.</span></span><br><span class="line">layer.shadowOpacity = <span class="number">0.5</span>; </span><br><span class="line"><span class="comment">/// 用于构造层阴影的轮廓，能够提高性能</span></span><br><span class="line">view.layer.shadowPath = [[<span class="type">UIBezierPath</span> bezierPathWithRect:view.bounds] <span class="type">CGPath</span>];</span><br></pre></td></tr></table></figure>
+
+<a id="more"></a>
 
 <ul>
 <li>当没有设置<code>layer.shadowPath</code>的时候，可以通过打开<br><code>Xcode---&gt;Debug---&gt;View Debugging---&gt;Rendering---&gt;Color Offscreen-Rendered Yellow</code><br>查看到当前设置阴影的view有一层黄色蒙板，也就是当前view已经产生离屏渲染了 </li>
@@ -73,21 +57,91 @@
       </tags>
   </entry>
   <entry>
-    <title>Hello World</title>
-    <url>/2020/07/20/hello-world/</url>
-    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
+    <title>Cocoa 集合类型：NSPointerArray，NSMapTable，NSHashTable</title>
+    <url>/2017/08/24/Cocoa%E9%9B%86%E5%90%88%E7%B1%BB%E5%9E%8B%EF%BC%9ANSPointerArra%E3%80%81NSMapTable%E3%80%81NSHashTable/</url>
+    <content><![CDATA[<!-- toc -->
 
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<p>在iOS6之后新增了NSPointerArray，NSMapTable，NSHashTable三种集合，分别拓展了NSArray、NSDictionary、NSSet的功能。</p>
+<a id="more"></a> 
 
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F; NSPointerArray，NSMapTable，NSHashTable</span><br><span class="line">API_AVAILABLE(macos(10.5), ios(6.0), watchos(2.0), tvos(9.0))</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<p>传统集合类型的短板：</p>
+<ul>
+<li>只能强引用放入集合中的对象</li>
+<li>如果想要弱引用，只能通过NSValue包装</li>
+<li>不能放入nil</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">/// NSValue的这个方法可以保持对对象的弱引用</span></span><br><span class="line">+ (<span class="type">NSValue</span> *)valueWithNonretainedObject:(nullable id)anObject;</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html" target="_blank" rel="noopener">Deployment</a></p>
+<p>而新增的这三种集合，解决了以上问题，他们都使用了NSPointerFunctionsOptions和NSPointerFunctions来决定内存管理等方式，先来看下它们：</p>
+<p><strong>NSPointerFunctionsOptions</strong><br>它是CF_OPTIONS类型的，用法与CF_ENUM类似，一共分为三类：</p>
+<ul>
+<li>内存管理方式</li>
+<li>对象判等方式</li>
+<li>内存标识方式</li>
+</ul>
+<p>例如：需要弱引用成员、使用对象方式对比、并且 add 时 copy 对象，则可以这么写：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="type">NSPointerFunctionsOptions</span> *options = <span class="type">NSPointerFunctionsWeakMemory</span> | <span class="type">NSPointerFunctionsObjectPersonality</span> | <span class="type">NSPointerFunctionsCopyIn</span>;</span><br></pre></td></tr></table></figure>
+
+<p>具体类型在此不再赘述</p>
+<p><strong>NSPointerFunctions</strong><br>是自定义成员的处理方式，如内存管理、对象判等，他们都是函数指针，用法如下</p>
+<pre><code class="Swift"><span class="keyword">static</span> <span class="type">BOOL</span> <span class="type">IsEqual</span>(const void *item1, const void *item2, <span class="type">NSUInteger</span> (*size)(const void *item)) {
+    <span class="keyword">return</span> *(const int *)item1 == *(const int *)item2;
+}
+
+<span class="type">NSPointerFunctions</span> *functions = [[<span class="type">NSPointerFunctions</span> alloc] <span class="keyword">init</span>];
+[functions setIsEqualFunction:<span class="type">IsEqual</span>];</code></pre>
+<h2 id="1-NSPointerArray"><a href="#1-NSPointerArray" class="headerlink" title="1.NSPointerArray"></a>1.NSPointerArray</h2><p><strong>特点：</strong></p>
+<ul>
+<li>与 NSArray 不同，它可以存储 NULL，并且 NULL 还参与 count 的计算</li>
+<li>count 可以 set，如果直接 set count，那么会使用 NULL 占位</li>
+<li>可以使用 weak 来修饰成员</li>
+<li>成员可以是所有指针类型 </li>
+</ul>
+<p><strong>初始化方法：</strong></p>
+<pre><code class="Swift">- (instancetype)initWithOptions:(<span class="type">NSPointerFunctionsOptions</span>)options;
+- (instancetype)initWithPointerFunctions:(<span class="type">NSPointerFunctions</span> *)functions; </code></pre>
+<p><strong>compact方法</strong><br>NSPointerArray可以添加NULL，同样API提供了compact方法用于剔除所有NULL<br>⚠️我们主动添加的NULL的时候，会被标记，之后调用compact的时候，所有NULL会被标记，但是我们直接set count或者成员已经被释放，此时并不会被标记，我们可以在调用compact之前手动给添加一个NULL来打上标记：</p>
+<pre><code class="Swift">[array addPointer:<span class="type">NULL</span>];
+[array compact];</code></pre>
+<h2 id="2-NSMapTable"><a href="#2-NSMapTable" class="headerlink" title="2.NSMapTable"></a>2.NSMapTable</h2><p><strong>特点：</strong></p>
+<ul>
+<li>key 可以不用遵循 NSCopying 协议</li>
+<li>key 和 value 的内存管理方式可以分开，如：key 是强引用，value 是弱引用</li>
+<li>当用 weak 修饰 key 或 value 时，有一方被释放，则该键值对移除</li>
+</ul>
+<h2 id="3-NSHashTable"><a href="#3-NSHashTable" class="headerlink" title="3.NSHashTable"></a>3.NSHashTable</h2><p><strong>特点：</strong>  </p>
+<ul>
+<li>与<strong>NSPointerArray</strong>一样可以根据NSPointerFunctionsOptions来决定对对象的内存管理方式</li>
+</ul>
+<p>最后来一个NSHashTable的demo验证一下</p>
+<pre><code class="Swift"><span class="comment">// demo </span>
+int main(int argc, const char * argv[]) {    
+    <span class="type">NSHashTable</span> *hashTable = [<span class="type">NSHashTable</span> hashTableWithOptions:<span class="type">NSPointerFunctionsWeakMemory</span>];
+    @autoreleasepool {
+        <span class="type">NSObject</span> *obj = [[<span class="type">NSObject</span> alloc] <span class="keyword">init</span>];
+        [hashTable addObject:obj];
+        <span class="type">NSLog</span>(@<span class="string">"before-----%@"</span>, hashTable);
+        <span class="type">NSLog</span>(@<span class="string">"before-----%ld"</span>, hashTable.<span class="built_in">count</span>);
+    }
+    <span class="type">NSLog</span>(@<span class="string">"after-----%@"</span>, hashTable);
+    <span class="type">NSLog</span>(@<span class="string">"after-----%ld"</span>, hashTable.<span class="built_in">count</span>);
+}   
+<span class="comment">// 结果</span>
+...before-----<span class="type">NSHashTable</span> {
+...[<span class="number">15</span>] &lt;<span class="type">NSObject</span>: <span class="number">0x10056a6d0</span>&gt;
+...}
+...before-----<span class="number">1</span>
+...after-----<span class="type">NSHashTable</span> {
+...} 
+...after-----<span class="number">1</span>  <span class="comment">//虽然obj被释放了，但是NULL仍然会被计数</span></code></pre>
 ]]></content>
+      <categories>
+        <category>Objective-C</category>
+      </categories>
+      <tags>
+        <tag>集合</tag>
+      </tags>
   </entry>
 </search>
