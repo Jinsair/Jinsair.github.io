@@ -20,19 +20,19 @@
     var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="在iOS6之后新增了NSPointerArray，NSMapTable，NSHashTable三种集合，分别拓展了NSArray、NSDictionary、NSSet的功能。">
+  <meta name="description" content="思考：如何避免单例的block被覆盖AFNetworking 框架中的 AFNetworkReachabilityManager 可以用来监听网络状态的变化，经常这样使用： 123[[AFNetworkReachabilityManager sharedManager] setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Cocoa 集合类型：NSPointerArray，NSMapTable，NSHashTable">
-<meta property="og:url" content="http://yoursite.com/2017/08/24/Cocoa%E9%9B%86%E5%90%88%E7%B1%BB%E5%9E%8B%EF%BC%9ANSPointerArra%E3%80%81NSMapTable%E3%80%81NSHashTable/index.html">
+<meta property="og:title" content="单例的block引发的思考">
+<meta property="og:url" content="http://yoursite.com/2018/06/02/%E5%8D%95%E4%BE%8B%E7%9A%84block%E5%BC%95%E5%8F%91%E7%9A%84%E6%80%9D%E8%80%83/index.html">
 <meta property="og:site_name" content="Jins‘ Note">
-<meta property="og:description" content="在iOS6之后新增了NSPointerArray，NSMapTable，NSHashTable三种集合，分别拓展了NSArray、NSDictionary、NSSet的功能。">
-<meta property="article:published_time" content="2017-08-24T06:19:32.000Z">
-<meta property="article:modified_time" content="2020-07-24T13:47:02.778Z">
+<meta property="og:description" content="思考：如何避免单例的block被覆盖AFNetworking 框架中的 AFNetworkReachabilityManager 可以用来监听网络状态的变化，经常这样使用： 123[[AFNetworkReachabilityManager sharedManager] setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus">
+<meta property="article:published_time" content="2018-06-02T06:15:35.000Z">
+<meta property="article:modified_time" content="2020-07-24T13:56:01.513Z">
 <meta property="article:author" content="JinsAir">
-<meta property="article:tag" content="集合">
+<meta property="article:tag" content="block">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://yoursite.com/2017/08/24/Cocoa%E9%9B%86%E5%90%88%E7%B1%BB%E5%9E%8B%EF%BC%9ANSPointerArra%E3%80%81NSMapTable%E3%80%81NSHashTable/">
+<link rel="canonical" href="http://yoursite.com/2018/06/02/%E5%8D%95%E4%BE%8B%E7%9A%84block%E5%BC%95%E5%8F%91%E7%9A%84%E6%80%9D%E8%80%83/">
 
 
 <script id="page-configurations">
@@ -45,7 +45,7 @@
   };
 </script>
 
-  <title>Cocoa 集合类型：NSPointerArray，NSMapTable，NSHashTable | Jins‘ Note</title>
+  <title>单例的block引发的思考 | Jins‘ Note</title>
   
 
 
@@ -191,7 +191,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/24/Cocoa%E9%9B%86%E5%90%88%E7%B1%BB%E5%9E%8B%EF%BC%9ANSPointerArra%E3%80%81NSMapTable%E3%80%81NSHashTable/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/02/%E5%8D%95%E4%BE%8B%E7%9A%84block%E5%BC%95%E5%8F%91%E7%9A%84%E6%80%9D%E8%80%83/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/header.png">
@@ -204,7 +204,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Cocoa 集合类型：NSPointerArray，NSMapTable，NSHashTable
+          单例的block引发的思考
         </h1>
 
         <div class="post-meta">
@@ -214,14 +214,14 @@
               </span>
               <span class="post-meta-item-text">Posted on</span>
 
-              <time title="Created: 2017-08-24 14:19:32" itemprop="dateCreated datePublished" datetime="2017-08-24T14:19:32+08:00">2017-08-24</time>
+              <time title="Created: 2018-06-02 14:15:35" itemprop="dateCreated datePublished" datetime="2018-06-02T14:15:35+08:00">2018-06-02</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-07-24 21:47:02" itemprop="dateModified" datetime="2020-07-24T21:47:02+08:00">2020-07-24</time>
+                <time title="Modified: 2020-07-24 21:56:01" itemprop="dateModified" datetime="2020-07-24T21:56:01+08:00">2020-07-24</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -246,81 +246,28 @@
       
         <!-- toc -->
 
-<p>在iOS6之后新增了NSPointerArray，NSMapTable，NSHashTable三种集合，分别拓展了NSArray、NSDictionary、NSSet的功能。</p>
-<a id="more"></a> 
+<h1 id="思考：如何避免单例的block被覆盖"><a href="#思考：如何避免单例的block被覆盖" class="headerlink" title="思考：如何避免单例的block被覆盖"></a>思考：如何避免单例的block被覆盖</h1><p>AFNetworking 框架中的 AFNetworkReachabilityManager 可以用来监听网络状态的变化，经常这样使用：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[[AFNetworkReachabilityManager sharedManager] setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status) &#123;</span><br><span class="line">        &lt;#code#&gt;</span><br><span class="line">&#125;];</span><br></pre></td></tr></table></figure>
+<p>查看源码，会发现 setReachabilityStatusChangeBlock 方法只是单纯的将 block 赋值给了一个普通变量，这说明 block 有被覆盖的风险。</p>
+<p>AFNetworking 的 issue 中也有人提出相同的问题，目前有2种解决方案：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1、在block的回调中发通知</span><br><span class="line">2、AFNetworking3.0 作者新增了一个 manager 类方法，可以创建一个新的 AFNetworkReachabilityManager 对象，这样就不会造成block被覆盖了</span><br></pre></td></tr></table></figure>
 
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; NSPointerArray，NSMapTable，NSHashTable</span><br><span class="line">API_AVAILABLE(macos(10.5), ios(6.0), watchos(2.0), tvos(9.0))</span><br></pre></td></tr></table></figure>
-
-<p>传统集合类型的短板：</p>
+<p>不使用上面2种办法，有没有别的方法可以避免block被覆盖呢？</p>
+<h2 id="集合"><a href="#集合" class="headerlink" title="集合"></a>集合</h2><p><strong>block被覆盖的原因：单例 + 使用普通对象接收block</strong><br>那么可以选择用集合来接收block，选择集合需要考虑2点：</p>
 <ul>
-<li>只能强引用放入集合中的对象</li>
-<li>如果想要弱引用，只能通过NSValue包装</li>
-<li>不能放入nil</li>
+<li>1、有序/无序</li>
+<li>2、strong/weak</li>
 </ul>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// NSValue的这个方法可以保持对对象的弱引用</span></span><br><span class="line">+ (<span class="type">NSValue</span> *)valueWithNonretainedObject:(nullable id)anObject;</span><br></pre></td></tr></table></figure>
-
-<p>而新增的这三种集合，解决了以上问题，他们都使用了NSPointerFunctionsOptions和NSPointerFunctions来决定内存管理等方式，先来看下它们：</p>
-<p><strong>NSPointerFunctionsOptions</strong><br>它是CF_OPTIONS类型的，用法与CF_ENUM类似，一共分为三类：</p>
+<p>此处使用有序集合貌似没什么用，使用 strong 的话也就是 NSMutableDictionary ，那么会引入一个新的问题：何时释放 block 呢？那么可以使用 NSMapTable ？将 key 设置为 NSPointerFunctionsWeakMemory ，那么就不用我们手动去释放了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">- (void)addNetworkStatusCallback:(dispatch_block_t)callback &#123;</span><br><span class="line">    [self.table setObject:callback forKey:@&quot;UUID&quot;];</span><br><span class="line">&#125;</span><br><span class="line">&#96;&#96;&#96; </span><br><span class="line">因为key是局部变量，所以出了方法后block仍然会被释放，所以得思考到底由谁来持有block。</span><br><span class="line">根据设计原则：谁注册回调就由谁来管理block，单例仅仅只维护 管理者 与 block 的映射关系。</span><br><span class="line"></span><br><span class="line">## Associated Object</span><br><span class="line">通过关联对象技术将 callback 绑定给 observer，而单例的 NSMapTable 中，key 和 value 都是 weak，仅需要维护 observer 与 callback 的映射关系即可，结构如下：</span><br></pre></td></tr></table></figure>
+<p>{<br>  <viewController>: <callback><br>} </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">单例中实现相应方法：</span><br></pre></td></tr></table></figure>
 <ul>
-<li>内存管理方式</li>
-<li>对象判等方式</li>
-<li>内存标识方式</li>
+<li>(void)addObserver:(id)observer callback:(dispatch_block_t)callback {<br>  [self.table setObject:callback forKey:observer];<br>  NSString *key = [[NSString stringWithFormat:@”%p”, &amp;observer] UTF8String];<br>  objc_setAssociatedObject(observer, key, callback, OBJC_ASSOCIATION_COPY_NONATOMIC);<br>}<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">在 viewController 中可以这样使用 ：</span><br></pre></td></tr></table></figure>
+[[ObserverSingleton shareInstance] addObserver:self callback:^{<br>  NSLog(@”status callback”);<br>}];<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">**移除操作**</span><br></pre></td></tr></table></figure></li>
+<li>(void)removeObserver:(id)observer {<br>  [self.table removeObjectForKey:observer];<br>  NSString *key = [[NSString stringWithFormat:@”%p”, &amp;observer] UTF8String];<br>  objc_setAssociatedObject(observer, key, nil, OBJC_ASSOCIATION_COPY_NONATOMIC);<br>}<pre><code></code></pre></li>
 </ul>
-<p>例如：需要弱引用成员、使用对象方式对比、并且 add 时 copy 对象，则可以这么写：</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">NSPointerFunctionsOptions</span> *options = <span class="type">NSPointerFunctionsWeakMemory</span> | <span class="type">NSPointerFunctionsObjectPersonality</span> | <span class="type">NSPointerFunctionsCopyIn</span>;</span><br></pre></td></tr></table></figure>
-
-<p>具体类型在此不再赘述</p>
-<p><strong>NSPointerFunctions</strong><br>是自定义成员的处理方式，如内存管理、对象判等，他们都是函数指针，用法如下</p>
-<pre><code class="Swift"><span class="keyword">static</span> <span class="type">BOOL</span> <span class="type">IsEqual</span>(const void *item1, const void *item2, <span class="type">NSUInteger</span> (*size)(const void *item)) {
-    <span class="keyword">return</span> *(const int *)item1 == *(const int *)item2;
-}
-
-<span class="type">NSPointerFunctions</span> *functions = [[<span class="type">NSPointerFunctions</span> alloc] <span class="keyword">init</span>];
-[functions setIsEqualFunction:<span class="type">IsEqual</span>];</code></pre>
-<h2 id="1-NSPointerArray"><a href="#1-NSPointerArray" class="headerlink" title="1.NSPointerArray"></a>1.NSPointerArray</h2><p><strong>特点：</strong></p>
-<ul>
-<li>与 NSArray 不同，它可以存储 NULL，并且 NULL 还参与 count 的计算</li>
-<li>count 可以 set，如果直接 set count，那么会使用 NULL 占位</li>
-<li>可以使用 weak 来修饰成员</li>
-<li>成员可以是所有指针类型 </li>
-</ul>
-<p><strong>初始化方法：</strong></p>
-<pre><code class="Swift">- (instancetype)initWithOptions:(<span class="type">NSPointerFunctionsOptions</span>)options;
-- (instancetype)initWithPointerFunctions:(<span class="type">NSPointerFunctions</span> *)functions; </code></pre>
-<p><strong>compact方法</strong><br>NSPointerArray可以添加NULL，同样API提供了compact方法用于剔除所有NULL<br>⚠️我们主动添加的NULL的时候，会被标记，之后调用compact的时候，所有NULL会被标记，但是我们直接set count或者成员已经被释放，此时并不会被标记，我们可以在调用compact之前手动给添加一个NULL来打上标记：</p>
-<pre><code class="Swift">[array addPointer:<span class="type">NULL</span>];
-[array compact];</code></pre>
-<h2 id="2-NSMapTable"><a href="#2-NSMapTable" class="headerlink" title="2.NSMapTable"></a>2.NSMapTable</h2><p><strong>特点：</strong></p>
-<ul>
-<li>key 可以不用遵循 NSCopying 协议</li>
-<li>key 和 value 的内存管理方式可以分开，如：key 是强引用，value 是弱引用</li>
-<li>当用 weak 修饰 key 或 value 时，有一方被释放，则该键值对移除</li>
-</ul>
-<h2 id="3-NSHashTable"><a href="#3-NSHashTable" class="headerlink" title="3.NSHashTable"></a>3.NSHashTable</h2><p><strong>特点：</strong>  </p>
-<ul>
-<li>与<strong>NSPointerArray</strong>一样可以根据NSPointerFunctionsOptions来决定对对象的内存管理方式</li>
-</ul>
-<p>最后来一个NSHashTable的demo验证一下</p>
-<pre><code class="Swift"><span class="comment">// demo </span>
-int main(int argc, const char * argv[]) {    
-    <span class="type">NSHashTable</span> *hashTable = [<span class="type">NSHashTable</span> hashTableWithOptions:<span class="type">NSPointerFunctionsWeakMemory</span>];
-    @autoreleasepool {
-        <span class="type">NSObject</span> *obj = [[<span class="type">NSObject</span> alloc] <span class="keyword">init</span>];
-        [hashTable addObject:obj];
-        <span class="type">NSLog</span>(@<span class="string">"before-----%@"</span>, hashTable);
-        <span class="type">NSLog</span>(@<span class="string">"before-----%ld"</span>, hashTable.<span class="built_in">count</span>);
-    }
-    <span class="type">NSLog</span>(@<span class="string">"after-----%@"</span>, hashTable);
-    <span class="type">NSLog</span>(@<span class="string">"after-----%ld"</span>, hashTable.<span class="built_in">count</span>);
-}   
-<span class="comment">// 结果</span>
-...before-----<span class="type">NSHashTable</span> {
-...[<span class="number">15</span>] &lt;<span class="type">NSObject</span>: <span class="number">0x10056a6d0</span>&gt;
-...}
-...before-----<span class="number">1</span>
-...after-----<span class="type">NSHashTable</span> {
-...} 
-...after-----<span class="number">1</span>  <span class="comment">//虽然obj被释放了，但是NULL仍然会被计数</span></code></pre>
+<p>其实这样处理有一个弊端：使用者很容易觉得 self 与 callback 没有引用关系，实际上得使用weakSelf 才能避免循环引用。</p>
 
     </div>
 
@@ -349,7 +296,7 @@ int main(int argc, const char * argv[]) {
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/%E9%9B%86%E5%90%88/" rel="tag"># 集合</a>
+              <a href="/tags/block/" rel="tag"># block</a>
           </div>
 
         
@@ -358,12 +305,12 @@ int main(int argc, const char * argv[]) {
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2016/04/21/%E7%BB%99UIView%E6%B7%BB%E5%8A%A0%E9%98%B4%E5%BD%B1%E7%9A%84%E6%AD%A3%E7%A1%AE%E6%96%B9%E5%BC%8F/" rel="prev" title="给UIView添加阴影的正确方式">
-      <i class="fa fa-chevron-left"></i> 给UIView添加阴影的正确方式
+    <a href="/2017/08/24/Cocoa%E9%9B%86%E5%90%88%E7%B1%BB%E5%9E%8B%EF%BC%9ANSPointerArra%E3%80%81NSMapTable%E3%80%81NSHashTable/" rel="prev" title="Cocoa 集合类型：NSPointerArray，NSMapTable，NSHashTable">
+      <i class="fa fa-chevron-left"></i> Cocoa 集合类型：NSPointerArray，NSMapTable，NSHashTable
     </a></div>
       <div class="post-nav-item">
-    <a href="/2018/06/02/%E5%8D%95%E4%BE%8B%E7%9A%84block%E5%BC%95%E5%8F%91%E7%9A%84%E6%80%9D%E8%80%83/" rel="next" title="单例的block引发的思考">
-      单例的block引发的思考 <i class="fa fa-chevron-right"></i>
+    <a href="/2020/03/24/macOS-Catalina-10-15-%E5%AE%89%E8%A3%85-CocoaPods-%E6%AD%A5%E9%AA%A4/" rel="next" title="macOS Catalina 10.15 安装 CocoaPods 步骤">
+      macOS Catalina 10.15 安装 CocoaPods 步骤 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -423,7 +370,7 @@ int main(int argc, const char * argv[]) {
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-NSPointerArray"><span class="nav-number">1.</span> <span class="nav-text">1.NSPointerArray</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-NSMapTable"><span class="nav-number">2.</span> <span class="nav-text">2.NSMapTable</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-NSHashTable"><span class="nav-number">3.</span> <span class="nav-text">3.NSHashTable</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#思考：如何避免单例的block被覆盖"><span class="nav-number">1.</span> <span class="nav-text">思考：如何避免单例的block被覆盖</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#集合"><span class="nav-number">1.1.</span> <span class="nav-text">集合</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
