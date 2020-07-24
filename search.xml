@@ -122,10 +122,12 @@ int main(int argc, const char * argv[]) {
     <url>/2018/06/02/%E5%8D%95%E4%BE%8B%E7%9A%84block%E5%BC%95%E5%8F%91%E7%9A%84%E6%80%9D%E8%80%83/</url>
     <content><![CDATA[<!-- toc -->
 
-<h1 id="思考：如何避免单例的block被覆盖"><a href="#思考：如何避免单例的block被覆盖" class="headerlink" title="思考：如何避免单例的block被覆盖"></a>思考：如何避免单例的block被覆盖</h1><p>AFNetworking 框架中的 AFNetworkReachabilityManager 可以用来监听网络状态的变化，经常这样使用：</p>
+<p>AFNetworking 框架中的 AFNetworkReachabilityManager 可以用来监听网络状态的变化，经常这样使用：</p>
+<a id="more"></a>
+
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[[AFNetworkReachabilityManager sharedManager] setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status) &#123;</span><br><span class="line">        &lt;#code#&gt;</span><br><span class="line">&#125;];</span><br></pre></td></tr></table></figure>
 <p>查看源码，会发现 setReachabilityStatusChangeBlock 方法只是单纯的将 block 赋值给了一个普通变量，这说明 block 有被覆盖的风险。</p>
-<p>AFNetworking 的 issue 中也有人提出相同的问题，目前有2种解决方案：</p>
+<h2 id="思考：如何避免单例的block被覆盖"><a href="#思考：如何避免单例的block被覆盖" class="headerlink" title="思考：如何避免单例的block被覆盖"></a>思考：如何避免单例的block被覆盖</h2><p>AFNetworking 的 issue 中也有人提出相同的问题，目前有2种解决方案：</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">1、在block的回调中发通知</span><br><span class="line">2、AFNetworking3.0 作者新增了一个 manager 类方法，可以创建一个新的 AFNetworkReachabilityManager 对象，这样就不会造成block被覆盖了</span><br></pre></td></tr></table></figure>
 
 <p>不使用上面2种办法，有没有别的方法可以避免block被覆盖呢？</p>

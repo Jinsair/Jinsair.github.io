@@ -45,19 +45,13 @@
     <link href="http://yoursite.com/2018/06/02/%E5%8D%95%E4%BE%8B%E7%9A%84block%E5%BC%95%E5%8F%91%E7%9A%84%E6%80%9D%E8%80%83/"/>
     <id>http://yoursite.com/2018/06/02/%E5%8D%95%E4%BE%8B%E7%9A%84block%E5%BC%95%E5%8F%91%E7%9A%84%E6%80%9D%E8%80%83/</id>
     <published>2018-06-02T06:15:35.000Z</published>
-    <updated>2020-07-24T13:56:01.513Z</updated>
+    <updated>2020-07-24T14:08:02.438Z</updated>
     
     <summary type="html">
     
-      
-      
-        
-        
-          &lt;!-- toc --&gt;
+      &lt;!-- toc --&gt;
 
-&lt;h1 id=&quot;思考：如何避免单例的block被覆盖&quot;&gt;&lt;a href=&quot;#思考：如何避免单例的block被覆盖&quot; class=&quot;headerlink&quot;
-        
-      
+&lt;p&gt;AFNetworking 框架中的 AFNetworkReachabilityManager 可以用来监听网络状态的变化，经常这样使用：&lt;/p&gt;
     
     </summary>
     
