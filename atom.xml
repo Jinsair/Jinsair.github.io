@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-07-23T23:10:44.865Z</updated>
+  <updated>2020-07-24T14:48:11.972Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -21,13 +21,13 @@
     <link href="http://yoursite.com/2020/03/24/macOS-Catalina-10-15-%E5%AE%89%E8%A3%85-CocoaPods-%E6%AD%A5%E9%AA%A4/"/>
     <id>http://yoursite.com/2020/03/24/macOS-Catalina-10-15-%E5%AE%89%E8%A3%85-CocoaPods-%E6%AD%A5%E9%AA%A4/</id>
     <published>2020-03-23T23:09:46.000Z</published>
-    <updated>2020-07-23T23:10:44.865Z</updated>
+    <updated>2020-07-24T14:48:11.972Z</updated>
     
     <summary type="html">
     
       &lt;!-- toc --&gt;
 
-&lt;h2 id=&quot;先查看下电脑上的-CocoaPods-版本&quot;&gt;&lt;a href=&quot;#先查看下电脑上的-CocoaPods-版本&quot; class=&quot;headerlink&quot; title=&quot;先查看下电脑上的 CocoaPods 版本&quot;&gt;&lt;/a&gt;先查看下电脑上的 CocoaPods 版本&lt;/h2&gt;&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;pod --version&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;h5 id=&quot;1-检查电脑上的-CocoaPods-版本&quot;&gt;&lt;a href=&quot;#1-检查电脑上的-CocoaPods-版本&quot; class=&quot;headerlink&quot; title=&quot;1. 检查电脑上的 CocoaPods 版本&quot;&gt;&lt;/a&gt;1. 检查电脑上的 CocoaPods 版本&lt;/h5&gt;&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;pod --version&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
 &lt;p&gt;输出：zsh: command not found: pod  好的 你果然没有安装CocoaPods&lt;/p&gt;
     
     </summary>
@@ -37,6 +37,30 @@
     
     
       <category term="CocoaPods" scheme="http://yoursite.com/tags/CocoaPods/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Git常用指令</title>
+    <link href="http://yoursite.com/2018/03/24/Git%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/"/>
+    <id>http://yoursite.com/2018/03/24/Git%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</id>
+    <published>2018-03-24T07:11:39.000Z</published>
+    <updated>2020-07-24T14:45:14.872Z</updated>
+    
+    <summary type="html">
+    
+      &lt;!-- TOC --&gt;
+
+&lt;h3 id=&quot;一、新建仓库&quot;&gt;&lt;a href=&quot;#一、新建仓库&quot; class=&quot;headerlink&quot; title=&quot;一、新建仓库&quot;&gt;&lt;/a&gt;一、新建仓库&lt;/h3&gt;&lt;hr&gt;
+&lt;figure class=&quot;highlight swift&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;# 在当前目录新建一个&lt;span class=&quot;type&quot;&gt;Git&lt;/span&gt;仓库&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;$ git &lt;span class=&quot;keyword&quot;&gt;init&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;# 新建一个目录，将其初始化为&lt;span class=&quot;type&quot;&gt;Git&lt;/span&gt;仓库&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;$ git &lt;span class=&quot;keyword&quot;&gt;init&lt;/span&gt; [project-name]&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;# 克隆一个项目&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;git clone [url]&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+    
+    </summary>
+    
+    
+      <category term="Tools" scheme="http://yoursite.com/categories/Tools/"/>
+    
+    
+      <category term="Git" scheme="http://yoursite.com/tags/Git/"/>
     
   </entry>
   
@@ -60,34 +84,6 @@
     
     
       <category term="block" scheme="http://yoursite.com/tags/block/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Git常用指令</title>
-    <link href="http://yoursite.com/2018/03/24/Git%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/"/>
-    <id>http://yoursite.com/2018/03/24/Git%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</id>
-    <published>2018-03-24T07:11:39.000Z</published>
-    <updated>2020-07-24T14:43:00.552Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;h3 id=&quot;一、新建仓库&quot;&gt;&lt;a href=&quot;#一、新建仓库&quot; class=&quot;headerlink&quot; title=&quot;一、新建仓库&quot;&gt;&lt;/a&gt;一、新建仓库&lt;/h3&gt;&lt;hr&gt;
-&lt;figure class=&quot;highlight swift&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td
-        
-      
-    
-    </summary>
-    
-    
-      <category term="Tools" scheme="http://yoursite.com/categories/Tools/"/>
-    
-    
-      <category term="Git" scheme="http://yoursite.com/tags/Git/"/>
     
   </entry>
   
