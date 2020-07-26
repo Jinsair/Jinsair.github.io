@@ -507,6 +507,89 @@ http://www.joes-hardware.com/specials/saw-blade.gif</code></p>
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/30/%E9%93%BE%E8%A1%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.png">
+      <meta itemprop="name" content="JinsAir">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jins‘ Note">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/03/30/%E9%93%BE%E8%A1%A8/" class="post-title-link" itemprop="url">链表</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2017-03-30 11:28:01" itemprop="dateCreated datePublished" datetime="2017-03-30T11:28:01+08:00">2017-03-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2018-07-30 14:32:12" itemprop="dateModified" datetime="2018-07-30T14:32:12+08:00">2018-07-30</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div class="post-gallery" itemscope itemtype="http://schema.org/ImageGallery">
+            <img src="https://i.loli.net/2018/07/30/5b5ea5e6c5c09.png" itemprop="contentUrl">
+        </div>
+          <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>大学里的数据结构忘记的干干净净，通常是知道有某个东西，但却说不出个所以然，做iOS开发两年基本上没遇到用上链表、二叉树等知识点的场合，只有在面试的时候偶尔会被问到，这个时候答不上来感觉好尴尬-_-！当然，这些数据结构知识还是很重要的，决定从今天开始，重新学习下这些当年在大学里没有掌握的知识，然后挤出时间来刷刷LeetCode.</p>
+<h2 id="链表是什么"><a href="#链表是什么" class="headerlink" title="链表是什么"></a>链表是什么</h2><h4 id="1-优点"><a href="#1-优点" class="headerlink" title="1.优点"></a>1.优点</h4><pre><code>* 解决了数组元素个数无法改变的限制.
+* 数组移动元素的过程中，要对元素进行大范围的移动，耗时且效率低.</code></pre><h4 id="2-基本结构"><a href="#2-基本结构" class="headerlink" title="2.基本结构"></a>2.基本结构</h4><p><img src="https://i.loli.net/2018/07/30/5b5eaabe38d91.png" alt="链表.png"></p>
+<p>由上图可以看出： </p>
+<ul>
+<li>链表就是多个指针连接的多个结构体。</li>
+<li>链表的基本构成：头指针(Header) + 若干个节点(节点包括了数据域和指针域)。头指针指向链表的第一个节点，然后第一个节点中的指针指向下一个节点，然后依次指到最后一个节点，最后一个节点要指向NULL。</li>
+</ul>
+<h5 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h5><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">listNode</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">int</span> data; <span class="comment">// 数据域，用于储存数据</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">listNode</span> *<span class="title">next</span>;</span> <span class="comment">// 指针域，用来访问节点数据，指向下一个节点</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="创建一个节点"><a href="#创建一个节点" class="headerlink" title="创建一个节点"></a>创建一个节点</h5><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">listNode</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">int</span> data; <span class="comment">// 数据域，用于储存数据</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">listNode</span> *<span class="title">next</span>;</span> <span class="comment">// 指针域，用来访问节点数据，指向下一个节点</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">listNode</span> <span class="title">singleNode</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="function">singleNode *<span class="title">create_single_node</span><span class="params">(<span class="keyword">int</span> data)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 创建一个节点并分配空间</span></span><br><span class="line">    singleNode *node = <span class="literal">NULL</span>;</span><br><span class="line">    node = (singleNode *)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(singleNode));</span><br><span class="line">    <span class="keyword">if</span>(node == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"malloc failure!\n"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 清理一下</span></span><br><span class="line">    <span class="built_in">memset</span>(node,<span class="number">0</span>,<span class="keyword">sizeof</span>(singleNode));</span><br><span class="line">    <span class="comment">// 指定值，并且让next指针指向NULL</span></span><br><span class="line">    node-&gt;data = data;</span><br><span class="line">    node-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="keyword">return</span> node;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line"></span><br><span class="line">int main(void)</span><br><span class="line">&#123;</span><br><span class="line">    int data &#x3D; 1000;</span><br><span class="line">    singleNode *node &#x3D; create_single_node(data); &#x2F;&#x2F; 创建一个节点 </span><br><span class="line">    printf(&quot;node-&gt;data &#x3D; %d\n&quot;, node-&gt;data);</span><br><span class="line">    printf(&quot;node-&gt;next &#x3D; %d\n&quot;, node-&gt;next);</span><br><span class="line">    free(node);</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>执行结果：<br>node-&gt;data = 100<br>node-&gt;next = 0</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/30/%E9%93%BE%E8%A1%A8%E5%92%8C%E4%BA%8C%E5%8F%89%E6%A0%91/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -583,89 +666,6 @@ http://www.joes-hardware.com/specials/saw-blade.gif</code></p>
 
 <h3 id="二叉查找树"><a href="#二叉查找树" class="headerlink" title="二叉查找树"></a>二叉查找树</h3><p>二叉查找树是一种特殊的二叉树，它的左子树中所有节点的值都小于根节点的值，右子树中节点的值都大于根节点的值。</p>
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 判断一颗二叉树是否为二叉查找树</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">isBinarySearchTree</span><span class="params">(root: TreeNode?)</span></span> -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> _helper(root, <span class="literal">nil</span>, <span class="literal">nil</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">_helper</span><span class="params">(<span class="number">_</span> node: TreeNode?, <span class="number">_</span> <span class="built_in">min</span>: Int?, <span class="number">_</span> <span class="built_in">max</span>: Int?)</span></span> -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line">    <span class="comment">// 处理节点为 nil 的情况</span></span><br><span class="line">    <span class="keyword">guard</span> <span class="keyword">let</span> node = node <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 所有右子节点都必须大于根节点</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">let</span> <span class="built_in">min</span> = <span class="built_in">min</span>, node.val &lt;= <span class="built_in">min</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 所有左子节点都必须小于根节点</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">let</span> <span class="built_in">max</span> = <span class="built_in">max</span>, node.val &gt;= <span class="built_in">max</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> _helper(node.<span class="keyword">left</span>, <span class="built_in">min</span>, node.val) &amp;&amp; _helper(node.<span class="keyword">right</span>, node.val, <span class="built_in">max</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/30/%E9%93%BE%E8%A1%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.png">
-      <meta itemprop="name" content="JinsAir">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Jins‘ Note">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2017/03/30/%E9%93%BE%E8%A1%A8/" class="post-title-link" itemprop="url">链表</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2017-03-30 11:28:01" itemprop="dateCreated datePublished" datetime="2017-03-30T11:28:01+08:00">2017-03-30</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2018-07-30 14:32:12" itemprop="dateModified" datetime="2018-07-30T14:32:12+08:00">2018-07-30</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-        <div class="post-gallery" itemscope itemtype="http://schema.org/ImageGallery">
-            <img src="https://i.loli.net/2018/07/30/5b5ea5e6c5c09.png" itemprop="contentUrl">
-        </div>
-          <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>大学里的数据结构忘记的干干净净，通常是知道有某个东西，但却说不出个所以然，做iOS开发两年基本上没遇到用上链表、二叉树等知识点的场合，只有在面试的时候偶尔会被问到，这个时候答不上来感觉好尴尬-_-！当然，这些数据结构知识还是很重要的，决定从今天开始，重新学习下这些当年在大学里没有掌握的知识，然后挤出时间来刷刷LeetCode.</p>
-<h2 id="链表是什么"><a href="#链表是什么" class="headerlink" title="链表是什么"></a>链表是什么</h2><h4 id="1-优点"><a href="#1-优点" class="headerlink" title="1.优点"></a>1.优点</h4><pre><code>* 解决了数组元素个数无法改变的限制.
-* 数组移动元素的过程中，要对元素进行大范围的移动，耗时且效率低.</code></pre><h4 id="2-基本结构"><a href="#2-基本结构" class="headerlink" title="2.基本结构"></a>2.基本结构</h4><p><img src="https://i.loli.net/2018/07/30/5b5eaabe38d91.png" alt="链表.png"></p>
-<p>由上图可以看出： </p>
-<ul>
-<li>链表就是多个指针连接的多个结构体。</li>
-<li>链表的基本构成：头指针(Header) + 若干个节点(节点包括了数据域和指针域)。头指针指向链表的第一个节点，然后第一个节点中的指针指向下一个节点，然后依次指到最后一个节点，最后一个节点要指向NULL。</li>
-</ul>
-<h5 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h5><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">listNode</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">int</span> data; <span class="comment">// 数据域，用于储存数据</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">listNode</span> *<span class="title">next</span>;</span> <span class="comment">// 指针域，用来访问节点数据，指向下一个节点</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h5 id="创建一个节点"><a href="#创建一个节点" class="headerlink" title="创建一个节点"></a>创建一个节点</h5><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">listNode</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">int</span> data; <span class="comment">// 数据域，用于储存数据</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">listNode</span> *<span class="title">next</span>;</span> <span class="comment">// 指针域，用来访问节点数据，指向下一个节点</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">listNode</span> <span class="title">singleNode</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="function">singleNode *<span class="title">create_single_node</span><span class="params">(<span class="keyword">int</span> data)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 创建一个节点并分配空间</span></span><br><span class="line">    singleNode *node = <span class="literal">NULL</span>;</span><br><span class="line">    node = (singleNode *)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(singleNode));</span><br><span class="line">    <span class="keyword">if</span>(node == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"malloc failure!\n"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 清理一下</span></span><br><span class="line">    <span class="built_in">memset</span>(node,<span class="number">0</span>,<span class="keyword">sizeof</span>(singleNode));</span><br><span class="line">    <span class="comment">// 指定值，并且让next指针指向NULL</span></span><br><span class="line">    node-&gt;data = data;</span><br><span class="line">    node-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="keyword">return</span> node;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h5 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line"></span><br><span class="line">int main(void)</span><br><span class="line">&#123;</span><br><span class="line">    int data &#x3D; 1000;</span><br><span class="line">    singleNode *node &#x3D; create_single_node(data); &#x2F;&#x2F; 创建一个节点 </span><br><span class="line">    printf(&quot;node-&gt;data &#x3D; %d\n&quot;, node-&gt;data);</span><br><span class="line">    printf(&quot;node-&gt;next &#x3D; %d\n&quot;, node-&gt;next);</span><br><span class="line">    free(node);</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>执行结果：<br>node-&gt;data = 100<br>node-&gt;next = 0</p>
-</blockquote>
-
       
     </div>
 
