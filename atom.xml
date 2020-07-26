@@ -63,6 +63,121 @@
   </entry>
   
   <entry>
+    <title>解除Chrome非https摄像头、定位等限制</title>
+    <link href="http://yoursite.com/2019/02/22/%E8%A7%A3%E9%99%A4Chrome%E9%9D%9Ehttps%E6%91%84%E5%83%8F%E5%A4%B4%E3%80%81%E5%AE%9A%E4%BD%8D%E7%AD%89%E9%99%90%E5%88%B6/"/>
+    <id>http://yoursite.com/2019/02/22/%E8%A7%A3%E9%99%A4Chrome%E9%9D%9Ehttps%E6%91%84%E5%83%8F%E5%A4%B4%E3%80%81%E5%AE%9A%E4%BD%8D%E7%AD%89%E9%99%90%E5%88%B6/</id>
+    <published>2019-02-22T05:46:27.000Z</published>
+    <updated>2019-02-22T07:19:49.000Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;Google&quot;&gt;&lt;a href=&quot;#Google&quot; class=&quot;headerlink&quot; title=&quot;Google&quot;&gt;&lt;/a&gt;Google&lt;/h2&gt;&lt;p&gt;2018年2月8日，谷歌安全博客发布公告：从2018年7月Chrome
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="Chrome" scheme="http://yoursite.com/tags/Chrome/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>MacOS 配置Apache+php</title>
+    <link href="http://yoursite.com/2019/02/15/MacOS-%E9%85%8D%E7%BD%AEApache-php/"/>
+    <id>http://yoursite.com/2019/02/15/MacOS-%E9%85%8D%E7%BD%AEApache-php/</id>
+    <published>2019-02-15T02:15:49.000Z</published>
+    <updated>2019-02-15T06:45:22.000Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h3 id=&quot;常用路径以及命令&quot;&gt;&lt;a href=&quot;#常用路径以及命令&quot; class=&quot;headerlink&quot; title=&quot;常用路径以及命令&quot;&gt;&lt;/a&gt;常用路径以及命令&lt;/h3&gt;&lt;blockquote&gt;
+&lt;p&gt;Apatche:
+        
+      
+    
+    </summary>
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>CoreData</title>
+    <link href="http://yoursite.com/2019/02/01/CoreData/"/>
+    <id>http://yoursite.com/2019/02/01/CoreData/</id>
+    <published>2019-02-01T02:48:49.000Z</published>
+    <updated>2019-02-15T05:24:13.000Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h1 id=&quot;1-创建托管对象模型&quot;&gt;&lt;a href=&quot;#1-创建托管对象模型&quot; class=&quot;headerlink&quot; title=&quot;1. 创建托管对象模型&quot;&gt;&lt;/a&gt;1.
+        
+      
+    
+    </summary>
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>记一次使用ReactiveCocoa的小问题</title>
+    <link href="http://yoursite.com/2018/07/26/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BD%BF%E7%94%A8ReactiveCocoa%E7%9A%84%E5%B0%8F%E9%97%AE%E9%A2%98/"/>
+    <id>http://yoursite.com/2018/07/26/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BD%BF%E7%94%A8ReactiveCocoa%E7%9A%84%E5%B0%8F%E9%97%AE%E9%A2%98/</id>
+    <published>2018-07-26T08:04:22.000Z</published>
+    <updated>2018-07-26T08:04:22.000Z</updated>
+    
+    <summary type="html">
+    
+    </summary>
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>LeetCode-俩数相加</title>
+    <link href="http://yoursite.com/2018/04/16/LeetCode-%E4%BF%A9%E6%95%B0%E7%9B%B8%E5%8A%A0/"/>
+    <id>http://yoursite.com/2018/04/16/LeetCode-%E4%BF%A9%E6%95%B0%E7%9B%B8%E5%8A%A0/</id>
+    <published>2018-04-16T14:37:10.000Z</published>
+    <updated>2018-07-30T03:11:57.000Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;给定两个非空链表来表示两个非负整数。位数按照逆序方式存储，它们的每个节点只存储单个数字。将两数相加返回一个新的链表。&lt;/p&gt;
+&lt;p&gt;你可以假设除了数字 0 之外，这两个数字都不会以零开头。&lt;/p&gt;
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;figure class=&quot;highlight
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="LeetCode" scheme="http://yoursite.com/tags/LeetCode/"/>
+    
+  </entry>
+  
+  <entry>
     <title>Git常用指令</title>
     <link href="http://yoursite.com/2018/03/24/Git%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/"/>
     <id>http://yoursite.com/2018/03/24/Git%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</id>
@@ -110,6 +225,29 @@
   </entry>
   
   <entry>
+    <title>JavaScript中 == 运算符</title>
+    <link href="http://yoursite.com/2018/01/08/JavaScript%E4%B8%AD-%E8%BF%90%E7%AE%97%E7%AC%A6/"/>
+    <id>http://yoursite.com/2018/01/08/JavaScript%E4%B8%AD-%E8%BF%90%E7%AE%97%E7%AC%A6/</id>
+    <published>2018-01-08T06:59:34.000Z</published>
+    <updated>2019-01-08T07:35:05.000Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;规则&quot;&gt;&lt;a href=&quot;#规则&quot; class=&quot;headerlink&quot;
+        
+      
+    
+    </summary>
+    
+    
+    
+  </entry>
+  
+  <entry>
     <title>Cocoa 集合类型：NSPointerArray，NSMapTable，NSHashTable</title>
     <link href="http://yoursite.com/2017/08/24/Cocoa%E9%9B%86%E5%90%88%E7%B1%BB%E5%9E%8B%EF%BC%9ANSPointerArra%E3%80%81NSMapTable%E3%80%81NSHashTable/"/>
     <id>http://yoursite.com/2017/08/24/Cocoa%E9%9B%86%E5%90%88%E7%B1%BB%E5%9E%8B%EF%BC%9ANSPointerArra%E3%80%81NSMapTable%E3%80%81NSHashTable/</id>
@@ -133,25 +271,234 @@
   </entry>
   
   <entry>
-    <title>给UIView添加阴影的正确方式</title>
-    <link href="http://yoursite.com/2016/04/21/%E7%BB%99UIView%E6%B7%BB%E5%8A%A0%E9%98%B4%E5%BD%B1%E7%9A%84%E6%AD%A3%E7%A1%AE%E6%96%B9%E5%BC%8F/"/>
-    <id>http://yoursite.com/2016/04/21/%E7%BB%99UIView%E6%B7%BB%E5%8A%A0%E9%98%B4%E5%BD%B1%E7%9A%84%E6%AD%A3%E7%A1%AE%E6%96%B9%E5%BC%8F/</id>
-    <published>2016-04-21T05:05:03.000Z</published>
-    <updated>2020-07-23T23:03:09.573Z</updated>
+    <title>HTTP概述</title>
+    <link href="http://yoursite.com/2017/07/03/HTTP%E6%A6%82%E8%BF%B0/"/>
+    <id>http://yoursite.com/2017/07/03/HTTP%E6%A6%82%E8%BF%B0/</id>
+    <published>2017-07-03T02:36:15.000Z</published>
+    <updated>2019-02-21T07:48:25.000Z</updated>
     
     <summary type="html">
     
-      &lt;!-- toc --&gt;
-
-&lt;h2 id=&quot;1-纯代码&quot;&gt;&lt;a href=&quot;#1-纯代码&quot; class=&quot;headerlink&quot; title=&quot;1.纯代码&quot;&gt;&lt;/a&gt;1.纯代码&lt;/h2&gt;&lt;figure class=&quot;highlight swift&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;/// 基本设置 &lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;type&quot;&gt;CALayer&lt;/span&gt; *layer = [view layer];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;/// 阴影半径，默认为3.&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;layer.shadowRadius = &lt;span class=&quot;number&quot;&gt;5.0&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;/// 阴影偏移量，默认为(0, -3).&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;/// x右、y下、-x左、-y上、(0, 0)为四边都有阴影.&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;layer.shadowOffset = &lt;span class=&quot;type&quot;&gt;CGSizeMake&lt;/span&gt;(&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;/// 阴影颜色，默认为黑色.&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;layer.shadowColor = [&lt;span class=&quot;type&quot;&gt;UIColor&lt;/span&gt; blackColor].&lt;span class=&quot;type&quot;&gt;CGColor&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;/// 阴影透明度，默认为0.&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;layer.shadowOpacity = &lt;span class=&quot;number&quot;&gt;0.5&lt;/span&gt;; &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;/// 用于构造层阴影的轮廓，能够提高性能&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;view.layer.shadowPath = [[&lt;span class=&quot;type&quot;&gt;UIBezierPath&lt;/span&gt; bezierPathWithRect:view.bounds] &lt;span class=&quot;type&quot;&gt;CGPath&lt;/span&gt;];&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+      
+      
+        
+        
+          &lt;h4 id=&quot;1-1-媒体类型&quot;&gt;&lt;a href=&quot;#1-1-媒体类型&quot; class=&quot;headerlink&quot; title=&quot;1.1 媒体类型&quot;&gt;&lt;/a&gt;1.1 媒体类型&lt;/h4&gt;&lt;p&gt;&lt;code&gt;MIME type (Multipurpose Internet Mail
+        
+      
     
     </summary>
     
     
-      <category term="iOS" scheme="http://yoursite.com/categories/iOS/"/>
+    
+      <category term="HTTP" scheme="http://yoursite.com/tags/HTTP/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>解决Hexo神烦的Error:Cannot-find-module</title>
+    <link href="http://yoursite.com/2017/05/26/%E8%A7%A3%E5%86%B3Hexo%E7%A5%9E%E7%83%A6%E7%9A%84Error-Cannot-find-module/"/>
+    <id>http://yoursite.com/2017/05/26/%E8%A7%A3%E5%86%B3Hexo%E7%A5%9E%E7%83%A6%E7%9A%84Error-Cannot-find-module/</id>
+    <published>2017-05-26T13:54:27.000Z</published>
+    <updated>2020-07-26T23:44:07.319Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h3 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h3&gt;&lt;p&gt;自从GitHub被微软给收购了，GitHub打开巨慢，无奈只好爬梯子，访问上是没啥问题了，但是clone、push等操作有时候速度为
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="hexo" scheme="http://yoursite.com/tags/hexo/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>链表和二叉树</title>
+    <link href="http://yoursite.com/2017/03/30/%E9%93%BE%E8%A1%A8%E5%92%8C%E4%BA%8C%E5%8F%89%E6%A0%91/"/>
+    <id>http://yoursite.com/2017/03/30/%E9%93%BE%E8%A1%A8%E5%92%8C%E4%BA%8C%E5%8F%89%E6%A0%91/</id>
+    <published>2017-03-30T03:28:01.000Z</published>
+    <updated>2019-02-20T03:27:40.000Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h2&gt;&lt;p&gt;链表？二叉树？我是谁？我在哪？我要做什么？&lt;/p&gt;
+&lt;h2 id=&quot;链表是什么&quot;&gt;&lt;a href=&quot;#链表是什么&quot;
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="链表 二叉树" scheme="http://yoursite.com/tags/%E9%93%BE%E8%A1%A8-%E4%BA%8C%E5%8F%89%E6%A0%91/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>链表</title>
+    <link href="http://yoursite.com/2017/03/30/%E9%93%BE%E8%A1%A8/"/>
+    <id>http://yoursite.com/2017/03/30/%E9%93%BE%E8%A1%A8/</id>
+    <published>2017-03-30T03:28:01.000Z</published>
+    <updated>2018-07-30T06:32:12.000Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot;
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="链表" scheme="http://yoursite.com/tags/%E9%93%BE%E8%A1%A8/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>常用排序算法</title>
+    <link href="http://yoursite.com/2016/10/03/%E5%B8%B8%E7%94%A8%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/"/>
+    <id>http://yoursite.com/2016/10/03/%E5%B8%B8%E7%94%A8%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/</id>
+    <published>2016-10-03T07:34:11.000Z</published>
+    <updated>2018-08-15T05:48:56.000Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h3 id=&quot;基本概念：&quot;&gt;&lt;a href=&quot;#基本概念：&quot; class=&quot;headerlink&quot;
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="算法" scheme="http://yoursite.com/tags/%E7%AE%97%E6%B3%95/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Git配置多个SSH-Key</title>
+    <link href="http://yoursite.com/2016/08/26/Git%E9%85%8D%E7%BD%AE%E5%A4%9A%E4%B8%AASSH-Key/"/>
+    <id>http://yoursite.com/2016/08/26/Git%E9%85%8D%E7%BD%AE%E5%A4%9A%E4%B8%AASSH-Key/</id>
+    <published>2016-08-26T13:54:27.000Z</published>
+    <updated>2018-08-08T07:20:04.000Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;ssh是一种网络协议，常用于计算机之间的加密登录。原理可以看阮一峰这篇文章：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;a href=&quot;http://www.ruanyifeng.com/blog/2011/12/ssh_remote_login.html&quot;
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="ssh" scheme="http://yoursite.com/tags/ssh/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Objective-C中的协议与分类</title>
+    <link href="http://yoursite.com/2016/08/15/Objective-C%E4%B8%AD%E7%9A%84%E5%8D%8F%E8%AE%AE%E4%B8%8E%E5%88%86%E7%B1%BB/"/>
+    <id>http://yoursite.com/2016/08/15/Objective-C%E4%B8%AD%E7%9A%84%E5%8D%8F%E8%AE%AE%E4%B8%8E%E5%88%86%E7%B1%BB/</id>
+    <published>2016-08-15T01:23:04.000Z</published>
+    <updated>2016-08-15T01:23:04.000Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;协议与分类&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="Objective-C" scheme="http://yoursite.com/categories/Objective-C/"/>
+    
+    
+      <category term="oc_protocol" scheme="http://yoursite.com/tags/oc-protocol/"/>
+    
+      <category term="oc_category" scheme="http://yoursite.com/tags/oc-category/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>CALayer</title>
+    <link href="http://yoursite.com/2016/08/15/CALayer/"/>
+    <id>http://yoursite.com/2016/08/15/CALayer/</id>
+    <published>2016-08-15T01:23:01.000Z</published>
+    <updated>2016-08-15T01:23:01.000Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;锚点&quot;&gt;&lt;a href=&quot;#锚点&quot; class=&quot;headerlink&quot; title=&quot;锚点&quot;&gt;&lt;/a&gt;锚点&lt;/h2&gt;&lt;p&gt;&lt;code&gt;anchorPoint&lt;/code&gt;
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Objective-C" scheme="http://yoursite.com/categories/Objective-C/"/>
     
     
       <category term="CALayer" scheme="http://yoursite.com/tags/CALayer/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>iOS多线程开发</title>
+    <link href="http://yoursite.com/2016/07/07/iOS%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%BC%80%E5%8F%91/"/>
+    <id>http://yoursite.com/2016/07/07/iOS%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%BC%80%E5%8F%91/</id>
+    <published>2016-07-07T12:18:09.000Z</published>
+    <updated>2018-08-15T06:15:26.000Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;!--[TOC]--&gt; 
+
+
+&lt;p&gt;前言：多线程技术在iOS日常开发里处处可见，它也是面试时面试官的偏爱，之前面试时没注意这方面的总结，被面试官虐的很惨😂。 &lt;/p&gt;
+&lt;h3 id=&quot;进程和线程的定义&quot;&gt;&lt;a href=&quot;#进程和线程的定义&quot;
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="多线程" scheme="http://yoursite.com/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/"/>
     
   </entry>
   

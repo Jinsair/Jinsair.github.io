@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="1. 创建托管对象模型CoreData的很多功能都依赖于你创建的实体类的描述、属性、关系的模式。CoreData使用一个名为托管对象模型的模式——NSManagedObjectModel的实例。一般来说，模型越丰富，CoreData支持你编写的应用程序的能力就越强。 托管对象模型允许CoreData从持久存储中的记录映射到应用程序中使用的托管对象。模型是实体描述对象(NSEntityDescrip">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CoreData">
+<meta property="og:url" content="http://yoursite.com/2019/02/01/CoreData/index.html">
+<meta property="og:site_name" content="Jins‘ Note">
+<meta property="og:description" content="1. 创建托管对象模型CoreData的很多功能都依赖于你创建的实体类的描述、属性、关系的模式。CoreData使用一个名为托管对象模型的模式——NSManagedObjectModel的实例。一般来说，模型越丰富，CoreData支持你编写的应用程序的能力就越强。 托管对象模型允许CoreData从持久存储中的记录映射到应用程序中使用的托管对象。模型是实体描述对象(NSEntityDescrip">
+<meta property="article:published_time" content="2019-02-01T02:48:49.000Z">
+<meta property="article:modified_time" content="2019-02-15T05:24:13.000Z">
+<meta property="article:author" content="JinsAir">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2019/02/01/CoreData/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>CoreData | Jins‘ Note</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Jins‘ Note" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Jins‘ Note</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">Yesterday you said tomorrow.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/01/CoreData/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.png">
+      <meta itemprop="name" content="JinsAir">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jins‘ Note">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          CoreData
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-02-01 10:48:49" itemprop="dateCreated datePublished" datetime="2019-02-01T10:48:49+08:00">2019-02-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-02-15 13:24:13" itemprop="dateModified" datetime="2019-02-15T13:24:13+08:00">2019-02-15</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="1-创建托管对象模型"><a href="#1-创建托管对象模型" class="headerlink" title="1. 创建托管对象模型"></a>1. 创建托管对象模型</h1><p>CoreData的很多功能都依赖于你创建的实体类的描述、属性、关系的模式。CoreData使用一个名为托管对象模型的模式——<code>NSManagedObjectModel</code>的实例。一般来说，模型越丰富，CoreData支持你编写的应用程序的能力就越强。</p>
+<p>托管对象模型允许CoreData从持久存储中的记录映射到应用程序中使用的托管对象。模型是实体描述对象(<code>NSEntityDescription</code>的实例)的集合。实体描述根据实体的名称、用于表示应用程序中的实体的类的名称以及它具有哪些属性(属性和关系)来描述实体(可以将其视为数据库中的表)。</p>
+<h2 id="创建实体和实体的属性"><a href="#创建实体和实体的属性" class="headerlink" title="创建实体和实体的属性"></a>创建实体和实体的属性</h2><p>在Xcode中启动新项目并打开模板选择对话框时，选择Use Core Data。CoreData模型的源文件会作为模板的一部分创建，该源文件的扩展名为<code>.xcdatamodeld</code>。在导航区域中选择该文件以显示CoreData模型编辑器。</p>
+<h2 id="实体名和类名"><a href="#实体名和类名" class="headerlink" title="实体名和类名"></a>实体名和类名</h2><p>注意，实体名和类名(NSManagedObject的子类)是不同的。数据模型中的实体结构不需要匹配类层次结构。官方推荐的类名带个MO后缀。</p>
+<h6 id="性能问题"><a href="#性能问题" class="headerlink" title="性能问题"></a>性能问题</h6><p>在使用SQLite持久存储时，要小心实体继承。从另一个实体继承的所有实体都存在于SQLite中的同一个表中。SQLite持久存储设计中的这个因素可能会造成性能问题。</p>
+<p>#2. CoreData栈</p>
+<h3 id="1-NSPersistentContainer（持久化容器）"><a href="#1-NSPersistentContainer（持久化容器）" class="headerlink" title="1.NSPersistentContainer（持久化容器）"></a>1.NSPersistentContainer（持久化容器）</h3><p>从iOS 10和macOS 10.12开始，<code>NSPersistentContainer</code>处理核心数据栈的创建，并提供对<code>NSManagedObjectContext</code>的访问，以及许多方便的方法。在iOS 10和macOS 10.12之前，核心数据栈的创建更加复杂。</p>
+<h3 id="2-NSManagedObjectModel（受托管的模型对象）"><a href="#2-NSManagedObjectModel（受托管的模型对象）" class="headerlink" title="2.NSManagedObjectModel（受托管的模型对象）"></a>2.NSManagedObjectModel（受托管的模型对象）</h3><p><code>NSManagedObjectModel</code>实例描述核心数据栈将要访问的数据。在创建<code>Core Data 堆栈</code>期间，<code>NSManagedObjectModel</code>作为创建堆栈的第一步加载到内存中。初始化<code>NSManagedObjectModel</code>对象之后，构造<code>NSPersistentStoreCoordinator</code>对象。</p>
+<h3 id="3-NSPersistentStoreCoordinator（持久化存储协调器）"><a href="#3-NSPersistentStoreCoordinator（持久化存储协调器）" class="headerlink" title="3.NSPersistentStoreCoordinator（持久化存储协调器）"></a>3.NSPersistentStoreCoordinator（持久化存储协调器）</h3><ul>
+<li><code>NSPersistentStoreCoordinator</code>位于<code>Core Data 堆栈</code>的中间，负责实现在模型中定义的实体的实例。它在模型中创建实体的新实例，并从持久存储<code>(NSPersistentStore)</code>检索现有实例。持久性存储可以在磁盘上或内存中。根据应用程序的结构，可以由<code>NSPersistentStoreCoordinator</code>协调多个持久性存储，尽管这种情况并不常见。</li>
+<li><code>NSManagedObjectModel</code>定义数据的结构，而<code>NSPersistentStoreCoordinator</code>从持久存储中的数据实现对象，并将这些对象传递给请求者<code>NSManagedObjectContext</code>。<code>NSPersistentStoreCoordinator</code>还验证数据状态是否与<code>NSManagedObjectModel</code>中定义匹配的一致。</li>
+<li>将<code>NSPersistentStore</code>添加到<code>NSPersistentStoreCoordinator</code>的调用是异步执行的。有几种情况会导致此调用阻塞调用线程(例如，与iCloud的集成和迁移)。因此，最好异步执行此调用，以避免阻塞用户界面队列。</li>
+</ul>
+<h3 id="4-NSManagedObjectContext（受托管对象上下文）"><a href="#4-NSManagedObjectContext（受托管对象上下文）" class="headerlink" title="4.NSManagedObjectContext（受托管对象上下文）"></a>4.NSManagedObjectContext（受托管对象上下文）</h3><ul>
+<li><p>托管对象上下文<code>(NSManagedObjectContext)</code>是应用程序将与之交互最多的对象，因此它是应用程序其余部分公开的对象。可以将它看作是智能的草稿本。当您从持久存储中获取对象时，您将临时副本带到临时存储区，在那里它们形成一个对象图(或对象图的集合)。然后可以根据自己的喜好修改这些对象。但是，除非您实际保存这些更改，否则持久性存储将保持不变。</p>
+</li>
+<li><p>所有托管对象都必须在上下文中注册。您可以使用上下文将对象添加到对象图中，并从对象图中删除对象。上下文跟踪您对单个对象的属性和对象之间的关系所做的更改。通过跟踪更改，上下文能够为您提供撤销和重做支持。它还确保如果您更改了对象之间的关系，则可以维护对象图的完整性。</p>
+</li>
+<li><p>如果选择保存所做的更改，上下文将确保对象处于有效状态。如果是，则将更改写入持久性存储(或多个存储)，为创建的对象添加新记录，并为删除的对象删除记录。</p>
+</li>
+<li><p>没有<code>CoreData</code>，您必须编写方法来支持数据的归档和非归档，跟踪模型对象，并与undo manager交互以支持undo。在<code>CoreData</code>框架中，大部分功能是自动提供的，主要是通过托管对象上下文提供的。</p>
+</li>
+</ul>
+<h1 id="3-创建并保存受托管的对象"><a href="#3-创建并保存受托管的对象" class="headerlink" title="3. 创建并保存受托管的对象"></a>3. 创建并保存受托管的对象</h1><p><code>NSManagedObject</code>实例实现核心数据模型对象所需的基本行为。<code>NSManagedObject</code>实例需要两个元素:实体描述(NSEntityDescription实例)和托管对象上下文(NSManagedObjectContext实例)。实体描述包括对象所表示的实体的名称及其属性和关系。托管对象上下文表示在其中创建托管对象的草稿。上下文跟踪对象的更改和对象之间的关系。</p>
+
+    </div>
+
+    
+    
+    
+        
+
+  <div class="followme">
+    <p>Welcome to my other publishing channels</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/07/26/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BD%BF%E7%94%A8ReactiveCocoa%E7%9A%84%E5%B0%8F%E9%97%AE%E9%A2%98/" rel="prev" title="记一次使用ReactiveCocoa的小问题">
+      <i class="fa fa-chevron-left"></i> 记一次使用ReactiveCocoa的小问题
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/02/15/MacOS-%E9%85%8D%E7%BD%AEApache-php/" rel="next" title="MacOS 配置Apache+php">
+      MacOS 配置Apache+php <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-创建托管对象模型"><span class="nav-number">1.</span> <span class="nav-text">1. 创建托管对象模型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#创建实体和实体的属性"><span class="nav-number">1.1.</span> <span class="nav-text">创建实体和实体的属性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实体名和类名"><span class="nav-number">1.2.</span> <span class="nav-text">实体名和类名</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#性能问题"><span class="nav-number">1.2.0.0.0.1.</span> <span class="nav-text">性能问题</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-NSPersistentContainer（持久化容器）"><span class="nav-number">1.2.1.</span> <span class="nav-text">1.NSPersistentContainer（持久化容器）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-NSManagedObjectModel（受托管的模型对象）"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.NSManagedObjectModel（受托管的模型对象）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-NSPersistentStoreCoordinator（持久化存储协调器）"><span class="nav-number">1.2.3.</span> <span class="nav-text">3.NSPersistentStoreCoordinator（持久化存储协调器）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-NSManagedObjectContext（受托管对象上下文）"><span class="nav-number">1.2.4.</span> <span class="nav-text">4.NSManagedObjectContext（受托管对象上下文）</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-创建并保存受托管的对象"><span class="nav-number">2.</span> <span class="nav-text">3. 创建并保存受托管的对象</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="JinsAir"
+      src="/images/header.png">
+  <p class="site-author-name" itemprop="name">JinsAir</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JinsAir</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

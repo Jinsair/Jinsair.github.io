@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="基本概念： 时间复杂度  同一个算法用不同的语言实现，或者用不同的编译程序进行编译，或者在不同的计算机上运行时，效率都肯定不同。这表明使用绝对的时间单位衡量算法的效率是不合适的。撇开这些与计算机软硬件有关的因素，可以认为一个特定的算法运行工作量的大小，只依赖于问题的规模（通常用n来表示），或者说它是问题规模n的函数。  算法由 控制结构（顺序、分支和循环）+原操作（数据类型固有的操作） 构成，则算">
+<meta property="og:type" content="article">
+<meta property="og:title" content="常用排序算法">
+<meta property="og:url" content="http://yoursite.com/2016/10/03/%E5%B8%B8%E7%94%A8%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/index.html">
+<meta property="og:site_name" content="Jins‘ Note">
+<meta property="og:description" content="基本概念： 时间复杂度  同一个算法用不同的语言实现，或者用不同的编译程序进行编译，或者在不同的计算机上运行时，效率都肯定不同。这表明使用绝对的时间单位衡量算法的效率是不合适的。撇开这些与计算机软硬件有关的因素，可以认为一个特定的算法运行工作量的大小，只依赖于问题的规模（通常用n来表示），或者说它是问题规模n的函数。  算法由 控制结构（顺序、分支和循环）+原操作（数据类型固有的操作） 构成，则算">
+<meta property="article:published_time" content="2016-10-03T07:34:11.000Z">
+<meta property="article:modified_time" content="2018-08-15T05:48:56.000Z">
+<meta property="article:author" content="JinsAir">
+<meta property="article:tag" content="算法">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2016/10/03/%E5%B8%B8%E7%94%A8%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>常用排序算法 | Jins‘ Note</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Jins‘ Note" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Jins‘ Note</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">Yesterday you said tomorrow.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/10/03/%E5%B8%B8%E7%94%A8%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.png">
+      <meta itemprop="name" content="JinsAir">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jins‘ Note">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          常用排序算法
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2016-10-03 15:34:11" itemprop="dateCreated datePublished" datetime="2016-10-03T15:34:11+08:00">2016-10-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2018-08-15 13:48:56" itemprop="dateModified" datetime="2018-08-15T13:48:56+08:00">2018-08-15</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="基本概念："><a href="#基本概念：" class="headerlink" title="基本概念："></a>基本概念：</h3><ol>
+<li><p>时间复杂度</p>
+<ul>
+<li><p>同一个算法用不同的语言实现，或者用不同的编译程序进行编译，或者在不同的计算机上运行时，效率都肯定不同。这表明使用绝对的时间单位衡量算法的效率是不合适的。撇开这些与计算机软硬件有关的因素，可以认为一个特定的算法<code>运行工作量</code>的大小，只依赖于<code>问题的规模</code>（通常用n来表示），或者说它是<code>问题规模n</code>的函数。</p>
+</li>
+<li><p>算法由 <code>控制结构（顺序、分支和循环）</code>+<code>原操作（数据类型固有的操作）</code> 构成，则算法时间取决于两者的综合效果。通常会选取一种对于所研究的问题来说是基本操作的原操作，以该原操作重复执行的次数作为算法的时间量度。</p>
+</li>
+<li><p>一般情况下，算法中的基本操作重复执行次数是问题规模n的某个函数f(n)，算法的时间量度记作：<code>T(n)=O(f(n))</code>  称作算法的<code>渐近时间复杂度</code>(asymptotic time complexity)，简称为<code>时间复杂度</code>。</p>
+</li>
+</ul>
+</li>
+<li><p>符号<code>O</code>(Big O notation)</p>
+<ul>
+<li>是用于描述函数渐进行为的数学符号。</li>
+<li>我们通常用 <code>T(n) = O(f(n))</code>来表示一个计算机算法的时间复杂度。</li>
+<li>若无特殊说明一般指的是最坏时间复杂度，一般不去讨论最好时间复杂度，没什么意义。</li>
+</ul>
+</li>
+</ol>
+<h3 id="常用排序算法"><a href="#常用排序算法" class="headerlink" title="常用排序算法"></a>常用排序算法</h3><p>先定义一个swap函数，用以交换a,b的值</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">void swap(int *x, int *y) &#123;</span><br><span class="line">    int tmp &#x3D; *x;</span><br><span class="line">    *x &#x3D; *y;</span><br><span class="line">    *y &#x3D; tmp;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="1-选择排序"><a href="#1-选择排序" class="headerlink" title="1.选择排序"></a>1.选择排序</h4><ul>
+<li>思想：首先选出最小的数放在第一位，然后选择第二小的数放在第二位，以此内推，直到所有的数从小到大排序。那么，对于大小为<code>n</code>的数组，需要<code>n-1</code>轮选择过程，第<code>i</code>轮选择第<code>i</code>小的数，放在第<code>i</code>个位置上。</li>
+<li>稳定性：不稳定。</li>
+<li>平均时间复杂度：<code>O(n^2)</code></li>
+<li>空间复杂度：<code>O(1)</code></li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">select_sort</span><span class="params">(<span class="keyword">int</span> arr[], <span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">    <span class="comment">//总共需要n-1轮选择,i的取值为[0，n-2]</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n<span class="number">-1</span>; i++)&#123;</span><br><span class="line">        <span class="comment">//记录第i小的数所在的索引</span></span><br><span class="line">        <span class="keyword">int</span> min_index = i;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> j = i + <span class="number">1</span>; j &lt; n; j++)&#123;</span><br><span class="line">            <span class="keyword">if</span>(arr[j] &lt; arr[min_index])&#123;</span><br><span class="line">                min_index = j;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">//根据记录的第i小的数的索引，找到了第i小的数。然后将该数放到其正确位置。也就是第i个位置。</span></span><br><span class="line">            <span class="keyword">if</span>(i != min_index)&#123;</span><br><span class="line">                swap(arr[i], arr[min_index]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-冒泡排序"><a href="#2-冒泡排序" class="headerlink" title="2.冒泡排序"></a>2.冒泡排序</h4><ul>
+<li>思想：不断的比较相邻的俩个数，让较大的数不断的往后移动，第一轮比较完成后就选出了最大的数，第二轮比较完成后就选出了次大的数。以此类推，对于大小为<code>n</code>的数组，总共需要<code>n-1</code>轮比较。</li>
+<li>稳定性：稳定。</li>
+<li>平均时间复杂度：<code>O(n^2)</code></li>
+<li>最好情况<code>O(n)</code></li>
+<li>最坏情况<code>O(n^2)</code></li>
+<li>空间复杂度：<code>O(1)</code></li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">bubble_sort</span><span class="params">(<span class="keyword">int</span> arr[], <span class="keyword">int</span> n)</span> </span>&#123; </span><br><span class="line">    <span class="comment">// 总共需要n-1轮比较，i的取值为[0, n-2]</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n<span class="number">-1</span>; i++)&#123;</span><br><span class="line">        <span class="comment">// n个数需要n-1次比较，前面i个数已经排好序，不需要参与比较</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; n-i<span class="number">-1</span>; j++)&#123;</span><br><span class="line">            <span class="keyword">if</span> (arr[j] &gt; arr[j+<span class="number">1</span>])&#123;</span><br><span class="line">                swap(arr[j], arr[j+<span class="number">1</span>]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-快速排序"><a href="#3-快速排序" class="headerlink" title="3.快速排序"></a>3.快速排序</h4><ul>
+<li>思想：分而治之。选取一个基准数（一般我们选择数组的第一位或者最后一位），然后将比基准数小的放在其左边，比基准数大的放在右边，这样就得到了俩个数组，然后重复执行以上操作。 </li>
+<li>稳定性：不稳定。</li>
+<li>平均时间复杂度<code>O(nlog(n))</code></li>
+<li>最好情况<code>O(nlog(n))</code>:每次选取的基准元素都是中位数，每次都划分出两个分区，需要进行logn次递归，故时间复杂度为O(nlogn)。</li>
+<li>最坏情况<code>O(n^2)</code>:每次选取的基准元素都为最大（或最小元素）导致每次只划分了一个分区，需要进行n-1次划分才能结束递归，故复杂度为O(n^2)。</li>
+<li>空间复杂度<code>O(nlog(n))</code></li>
+<li>分析：当数组元素基本有序时，快速排序将没有任何优势，基本退化为冒泡排序，可在选取基准元素时选取中间值进行优化。 </li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">quick_sort</span><span class="params">(<span class="keyword">int</span> *a, <span class="keyword">int</span> left, <span class="keyword">int</span> right)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> key, i, j, temp;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(left&gt;right)</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">    key = a[left];</span><br><span class="line">    i = left;</span><br><span class="line">    j = right;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span>(i != j)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">//从右边开始找，顺序很重要！</span></span><br><span class="line">        <span class="keyword">while</span>(a[j] &gt;= key &amp;&amp; i &lt; j)</span><br><span class="line">            j--;</span><br><span class="line">        <span class="comment">//再从左边开始找</span></span><br><span class="line">        <span class="keyword">while</span>(a[i] &lt;= key &amp;&amp; i &lt; j)</span><br><span class="line">            i++;</span><br><span class="line">        <span class="comment">//交换俩个数在数组的位置</span></span><br><span class="line">        <span class="keyword">if</span>(i&lt;j)</span><br><span class="line">        &#123;</span><br><span class="line">            temp = a[i];</span><br><span class="line">            a[i] = a[j];</span><br><span class="line">            a[j] = temp;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 将基准数归位</span></span><br><span class="line">    a[left] = a[i];</span><br><span class="line">    a[i] = key;</span><br><span class="line"></span><br><span class="line">    quick_sort(a, left, i<span class="number">-1</span>); <span class="comment">// 递归处理左边的部分</span></span><br><span class="line">    quick_sort(a, i+<span class="number">1</span>, right); <span class="comment">// 递归处理右边的部分</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="4-插入排序"><a href="#4-插入排序" class="headerlink" title="4.插入排序"></a>4.插入排序</h4><ul>
+<li>思想：和交换排序不同的是它不用进行交换操作，而是用一个临时变量存储当前值。当前面的元素比后面大时，先把后面的元素存入临时变量，前面元素的值放到后面元素位置，再到最后把其值插入到合适的数组位置。</li>
+<li>平均时间复杂度<code>O(n^2)</code></li>
+<li>最好时间复杂度<code>O(n)</code></li>
+<li>最坏时间复杂度<code>O(n^2)</code></li>
+<li>空间复杂度<code>O(1)</code></li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">insert_sort</span><span class="params">(<span class="keyword">int</span> *a, <span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">   <span class="keyword">int</span> tmp = <span class="number">0</span>;</span><br><span class="line">   <span class="comment">//需要n-1趟排序</span></span><br><span class="line">   <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; n; i++) &#123;</span><br><span class="line">       <span class="keyword">int</span> j = i - <span class="number">1</span>;</span><br><span class="line">       <span class="keyword">if</span> (a[i] &lt; a[j]) &#123;</span><br><span class="line">           tmp = a[i];</span><br><span class="line">           a[i] = a[j];</span><br><span class="line">           <span class="keyword">while</span> (tmp &lt; a[j<span class="number">-1</span>]) &#123;</span><br><span class="line">               a[j] = a[j<span class="number">-1</span>];</span><br><span class="line">               j--;</span><br><span class="line">           &#125;</span><br><span class="line">           a[j] = tmp;</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+        
+
+  <div class="followme">
+    <p>Welcome to my other publishing channels</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"># 算法</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2016/08/26/Git%E9%85%8D%E7%BD%AE%E5%A4%9A%E4%B8%AASSH-Key/" rel="prev" title="Git配置多个SSH-Key">
+      <i class="fa fa-chevron-left"></i> Git配置多个SSH-Key
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/03/30/%E9%93%BE%E8%A1%A8/" rel="next" title="链表">
+      链表 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#基本概念："><span class="nav-number">1.</span> <span class="nav-text">基本概念：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#常用排序算法"><span class="nav-number">2.</span> <span class="nav-text">常用排序算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-选择排序"><span class="nav-number">2.1.</span> <span class="nav-text">1.选择排序</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-冒泡排序"><span class="nav-number">2.2.</span> <span class="nav-text">2.冒泡排序</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-快速排序"><span class="nav-number">2.3.</span> <span class="nav-text">3.快速排序</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-插入排序"><span class="nav-number">2.4.</span> <span class="nav-text">4.插入排序</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="JinsAir"
+      src="/images/header.png">
+  <p class="site-author-name" itemprop="name">JinsAir</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JinsAir</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

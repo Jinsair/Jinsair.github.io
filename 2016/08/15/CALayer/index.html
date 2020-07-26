@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="锚点anchorPoint 它决定着CALayer身上的哪个点会在position所指定的位置上 CoreGraphics &amp;&amp; QuartzCoreCoreGraphics:绘图相关 QuartzCore:动画相关 什么是CALayer在iOS系统中,能看得见摸得着的东西基本上都是UIView,比如一个按钮,一个文本标签……  其实UIView之所以能显示在屏幕上,完全是因为它内">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CALayer">
+<meta property="og:url" content="http://yoursite.com/2016/08/15/CALayer/index.html">
+<meta property="og:site_name" content="Jins‘ Note">
+<meta property="og:description" content="锚点anchorPoint 它决定着CALayer身上的哪个点会在position所指定的位置上 CoreGraphics &amp;&amp; QuartzCoreCoreGraphics:绘图相关 QuartzCore:动画相关 什么是CALayer在iOS系统中,能看得见摸得着的东西基本上都是UIView,比如一个按钮,一个文本标签……  其实UIView之所以能显示在屏幕上,完全是因为它内">
+<meta property="og:image" content="http://yoursite.com/uploads/layer.png">
+<meta property="og:image" content="http://yoursite.com/uploads/CAAnimation.png">
+<meta property="article:published_time" content="2016-08-15T01:23:01.000Z">
+<meta property="article:modified_time" content="2016-08-15T01:23:01.000Z">
+<meta property="article:author" content="JinsAir">
+<meta property="article:tag" content="CALayer">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/uploads/layer.png">
+
+<link rel="canonical" href="http://yoursite.com/2016/08/15/CALayer/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>CALayer | Jins‘ Note</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Jins‘ Note" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Jins‘ Note</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">Yesterday you said tomorrow.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/08/15/CALayer/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.png">
+      <meta itemprop="name" content="JinsAir">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jins‘ Note">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          CALayer
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2016-08-15 09:23:01" itemprop="dateCreated datePublished" datetime="2016-08-15T09:23:01+08:00">2016-08-15</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Objective-C/" itemprop="url" rel="index"><span itemprop="name">Objective-C</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="锚点"><a href="#锚点" class="headerlink" title="锚点"></a>锚点</h2><p><code>anchorPoint</code> 它决定着<code>CALayer</code>身上的哪个点会在<code>position</code>所指定的位置上</p>
+<h2 id="CoreGraphics-amp-amp-QuartzCore"><a href="#CoreGraphics-amp-amp-QuartzCore" class="headerlink" title="CoreGraphics &amp;&amp; QuartzCore"></a>CoreGraphics &amp;&amp; QuartzCore</h2><p><code>CoreGraphics</code>:绘图相关</p>
+<p><code>QuartzCore</code>:动画相关</p>
+<h2 id="什么是CALayer"><a href="#什么是CALayer" class="headerlink" title="什么是CALayer"></a>什么是CALayer</h2><p>在iOS系统中,能看得见摸得着的东西基本上都是UIView,比如一个按钮,一个文本标签……</p>
+<ul>
+<li><p>其实UIView之所以能显示在屏幕上,完全是因为它内部的一个层</p>
+</li>
+<li><p>在创建UIView对象时,UIView内部会自动创建一个层(即<code>CALayer</code>对象),通过<code>UIView</code>的<code>layer</code>属性可以访问这个层.当UIView需要显示到屏幕上时,会调用会调用<code>drawRect:</code>方法进行绘图,并且会将所有内容绘制在自己的层上,绘图完毕后,系统会将层拷贝到屏幕上,于是就完成了UIView的显示</p>
+</li>
+<li><p>换句话说，UIView本身不具备显示的功能，是它内部的层才有显示功能。</p>
+</li>
+</ul>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">// 1.当我们将一个view添加到另一个view上时</span></span><br><span class="line">[<span class="keyword">self</span>.view addSubview:testView];</span><br><span class="line"></span><br><span class="line"><span class="comment">// 2.首先调用drawLayer</span></span><br><span class="line">-(<span class="keyword">void</span>)drawLayer:(<span class="built_in">CALayer</span> *)layer inContext:(<span class="built_in">CGContextRef</span>)ctx</span><br><span class="line">&#123;</span><br><span class="line">    [<span class="keyword">super</span> drawLayer:layer inContext:ctx];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 3.在调用drawRect</span></span><br><span class="line">-(<span class="keyword">void</span>)drawRect:(<span class="built_in">CGRect</span>)rect</span><br><span class="line">&#123;</span><br><span class="line">    [<span class="keyword">super</span> drawRect:rect];</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="创建新的图层"><a href="#创建新的图层" class="headerlink" title="创建新的图层"></a>创建新的图层</h2><p>UIView内部默认有个CALayer对象(层)，通过layer属性可以访问这个层。要注意的是，这个默认的层不允许重新创建，但可以往层里面添加子层</p>
+<ul>
+<li>UIView可以通过addSubview:方法添加子视图，类似地，CALayer可以通过addSublayer:方法添加子层</li>
+</ul>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="built_in">CALayer</span> * layer = [<span class="built_in">CALayer</span> layer];</span><br><span class="line"></span><br><span class="line">layer.frame = <span class="built_in">CGRectMake</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="number">100</span>, <span class="number">100</span>);</span><br><span class="line"></span><br><span class="line">layer.position = <span class="keyword">self</span>.view.center;</span><br><span class="line"></span><br><span class="line"><span class="comment">//设置内容</span></span><br><span class="line"></span><br><span class="line">layer.contents = [<span class="built_in">UIImage</span> imageNamed:<span class="string">@"ds"</span>];</span><br><span class="line"></span><br><span class="line">layer.cornerRadius = <span class="number">4.0</span>f ;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 如果设置了图片，需要设置这个属性为YES才有圆角效果</span></span><br><span class="line">layer.masksToBounds = <span class="literal">YES</span>;</span><br><span class="line"></span><br><span class="line">[<span class="keyword">self</span>.view.layer addSublayer:layer];</span><br></pre></td></tr></table></figure>
+
+<h2 id="为什么CALayer中使用CGColorRef和CGImageRef这2种数据类型，而不用UIColor和UIImage？"><a href="#为什么CALayer中使用CGColorRef和CGImageRef这2种数据类型，而不用UIColor和UIImage？" class="headerlink" title="为什么CALayer中使用CGColorRef和CGImageRef这2种数据类型，而不用UIColor和UIImage？"></a>为什么CALayer中使用CGColorRef和CGImageRef这2种数据类型，而不用UIColor和UIImage？</h2><ul>
+<li><p>首先要知道：CALayer是定义在QuartzCore框架中的；CGImageRef、CGColorRef两种数据类型是定义在CoreGraphics框架中的；UIColor、UIImage是定义在UIKit框架中的</p>
+</li>
+<li><p>其次，QuartzCore框架和CoreGraphics框架是可以跨平台使用的，在iOS和Mac OS X上都能使用，但是UIKit只能在iOS中使用</p>
+</li>
+<li><p>不过很多情况下，可以通过UIKit对象的特定方法，得到CoreGraphics对象，比如UIImage的CGImage方法可以返回一个CGImageRef</p>
+</li>
+</ul>
+<h2 id="UIView和CALayer的选择"><a href="#UIView和CALayer的选择" class="headerlink" title="UIView和CALayer的选择"></a>UIView和CALayer的选择</h2><ul>
+<li><p>其实，对比CALayer，UIView多了一个事件处理的功能。也就是说，CALayer不能处理用户的触摸事件，而UIView可以</p>
+</li>
+<li><p>所以，如果显示出来的东西需要跟用户进行交互的话，用UIView；如果不需要跟用户进行交互，用UIView或者CALayer都可以</p>
+</li>
+<li><p>当然，CALayer的性能会高一些，因为它少了事件处理的功能，更加轻量级</p>
+</li>
+</ul>
+<h2 id="UIView和CALayer的其他关系"><a href="#UIView和CALayer的其他关系" class="headerlink" title="UIView和CALayer的其他关系"></a>UIView和CALayer的其他关系</h2><ul>
+<li><p>UIView可以通过subviews属性访问所有的子视图，类似地，CALayer也可以通过sublayers属性访问所有的子层</p>
+</li>
+<li><p>UIView可以通过superview属性访问父视图，类似地，CALayer也可以通过superlayer属性访问父层</p>
+</li>
+<li><p>下面再看一张UIView和CALayer的关系图：</p>
+</li>
+</ul>
+<div style="text-align: center">
+<img src="/uploads/layer.png">
+</div>
+
+<h2 id="Core-Animation"><a href="#Core-Animation" class="headerlink" title="Core Animation"></a>Core Animation</h2><p>Core Animation，中文翻译为核心动画，它是一组非常强大的动画处理API，使用它能做出非常炫丽的动画效果，而且往往是事半功倍。也就是说，使用少量的代码就可以实现非常强大的功能。</p>
+<ul>
+<li>要注意的是，Core Animation是直接作用在CALayer上的，并非UIView。</li>
+</ul>
+<h3 id="Core-Animation-1"><a href="#Core-Animation-1" class="headerlink" title="Core Animation"></a>Core Animation</h3><ul>
+<li><p>使用它需要先添加QuartzCore.framework框架和引入主头文件&lt;QuartzCore/QuartzCore.h&gt;</p>
+</li>
+<li><p>初始化一个CAAnimation对象，并设置一些动画相关属性</p>
+</li>
+<li><p>通过调用CALayer的addAnimation:forKey:方法增加CAAnimation对象到CALayer中，这样就能开始执行动画了</p>
+</li>
+<li><p>通过调用CALayer的removeAnimationForKey:方法可以停止CALayer中的动画</p>
+</li>
+</ul>
+<blockquote>
+<p>CAAnimation的继承关系</p>
+</blockquote>
+<div style="text-align:center">
+<img src="/uploads/CAAnimation.png">
+</div>
+
+<blockquote>
+<p>黑线代表继承，黑色文字代表类名，白色文字代表属性。其中CAMediaTiming是一个协议(protocol)。</p>
+</blockquote>
+<h3 id="CAAnimation的常用属性"><a href="#CAAnimation的常用属性" class="headerlink" title="CAAnimation的常用属性"></a>CAAnimation的常用属性</h3><ul>
+<li>duration: 动画的持续时间</li>
+<li>repeatCount: 动画的重复次数</li>
+<li>timeFunction:控制动画运行的节奏</li>
+</ul>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">kCAMediaTimingFunctionLinear（线性）：匀速，给你一个相对静态的感觉</span><br><span class="line">kCAMediaTimingFunctionEaseIn（渐进）：动画缓慢进入，然后加速离开</span><br><span class="line">kCAMediaTimingFunctionEaseOut（渐出）：动画全速进入，然后减速的到达目的地</span><br><span class="line">kCAMediaTimingFunctionEaseInEaseOut（渐进渐出）：动画缓慢的进入，中间加速，然后减速的到达目的地。这个是默认的动画行为。</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>delegate: 控制动画运行的节奏</li>
+</ul>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">NSObject</span> (<span class="title">CAAnimationDelegate</span>)</span></span><br><span class="line"><span class="comment">// 动画开始执行的时候触发这个方法</span></span><br><span class="line">- (<span class="keyword">void</span>)animationDidStart:(<span class="built_in">CAAnimation</span> *)anim;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 动画执行完毕的时候触发这个方法</span></span><br><span class="line">- (<span class="keyword">void</span>)animationDidStop:(<span class="built_in">CAAnimation</span> *)anim finished:(<span class="built_in">BOOL</span>)flag;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="CAPropertyAnimation"><a href="#CAPropertyAnimation" class="headerlink" title="CAPropertyAnimation"></a>CAPropertyAnimation</h4><ul>
+<li><p>CAPropertyAnimation是CAAnimation的子类，但是不能直接使用，要想创建动画对象，应该使用它的两个子类：CABasicAnimation和CAKeyframeAnimation</p>
+</li>
+<li><p>它有个NSString类型的keyPath属性，你可以指定CALayer的某个属性名为keyPath，并且对CALayer的这个属性的值进行修改，达到相应的动画效果。比如，指定@”position”为keyPath，就会修改CALayer的position属性的值，以达到平移的动画效果</p>
+</li>
+<li><p>因此，初始化好CAPropertyAnimation的子类对象后，必须先设置keyPath，搞清楚要修改的是CALayer的哪个属性，执行的是怎样的动画</p>
+</li>
+</ul>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//对它的位置做动画</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">CABasicAnimation</span> * animation = [<span class="built_in">CABasicAnimation</span> animationWithKeyPath:<span class="string">@"position"</span>];</span><br><span class="line"></span><br><span class="line">animation.duration = <span class="number">1.4</span>;</span><br><span class="line"></span><br><span class="line">animation.fromValue = [<span class="built_in">NSValue</span> valueWithCGPoint:<span class="built_in">CGPointMake</span>(<span class="number">100</span>, <span class="number">100</span>)];</span><br><span class="line"></span><br><span class="line">animation.toValue = [<span class="built_in">NSValue</span> valueWithCGPoint:<span class="built_in">CGPointMake</span>(<span class="number">200</span>, <span class="number">200</span>)];</span><br><span class="line"></span><br><span class="line"><span class="comment">//默认情况下，动画执行完毕后，动画会自动从CALayer上移除，CALayer又会回到原来的状态。为了保持动画执行后的状态</span></span><br><span class="line">animation.removedOnCompletion = <span class="literal">NO</span>;</span><br><span class="line"></span><br><span class="line">animation.fillMode = kCAFillModeForwards;</span><br><span class="line"></span><br><span class="line"><span class="comment">//指定动画代理</span></span><br><span class="line">animation.delegate = <span class="keyword">self</span>;</span><br><span class="line"></span><br><span class="line">[view.layer addAnimation:animation forKey:<span class="string">@"translate"</span>];</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//实现圆环waittingView主要实现代码</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">CAReplicatorLayer</span> * layer = [[<span class="built_in">CAReplicatorLayer</span> alloc] init];</span><br><span class="line">    </span><br><span class="line">    layer.frame = <span class="built_in">CGRectMake</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="number">100</span>, <span class="number">100</span>);</span><br><span class="line">    </span><br><span class="line">    layer.backgroundColor = [<span class="built_in">UIColor</span> grayColor].CGColor;</span><br><span class="line">    </span><br><span class="line">    layer.position = <span class="keyword">self</span>.view.center;</span><br><span class="line">    </span><br><span class="line">    layer.cornerRadius = <span class="number">6.0</span>f;</span><br><span class="line">    </span><br><span class="line">    [<span class="keyword">self</span>.view.layer addSublayer:layer];</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    <span class="built_in">CALayer</span> * dotLayer = [[<span class="built_in">CALayer</span> alloc] init];</span><br><span class="line">    </span><br><span class="line">    dotLayer.frame = <span class="built_in">CGRectMake</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="number">15</span>, <span class="number">15</span>);</span><br><span class="line">    </span><br><span class="line">    dotLayer.position = <span class="built_in">CGPointMake</span>(<span class="number">14</span>, <span class="number">50</span>);</span><br><span class="line">    </span><br><span class="line">    dotLayer.cornerRadius = <span class="number">7.5</span>;</span><br><span class="line">    </span><br><span class="line">    dotLayer.backgroundColor = [<span class="built_in">UIColor</span> lightGrayColor].CGColor;</span><br><span class="line">    </span><br><span class="line">    [layer addSublayer:dotLayer];</span><br><span class="line">    </span><br><span class="line">    layer.instanceCount = <span class="number">10</span> ;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">float</span> angle = M_PI * <span class="number">2</span> / <span class="number">10</span>;</span><br><span class="line">    </span><br><span class="line">    layer.instanceTransform = <span class="built_in">CATransform3DMakeRotation</span>(angle, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">   </span><br><span class="line">    <span class="built_in">CABasicAnimation</span> * animation = [<span class="built_in">CABasicAnimation</span> animationWithKeyPath:<span class="string">@"transform.scale"</span>];</span><br><span class="line">    </span><br><span class="line">    animation.duration = <span class="number">1.0</span>f;</span><br><span class="line">    </span><br><span class="line">    animation.fromValue = @<span class="number">1</span>;</span><br><span class="line">    </span><br><span class="line">    animation.toValue = @<span class="number">0</span>;</span><br><span class="line">    </span><br><span class="line">    animation.repeatCount = MAXFLOAT;</span><br><span class="line">    </span><br><span class="line">    [dotLayer addAnimation:animation forKey:<span class="string">@"animation"</span>];</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    layer.instanceDelay = <span class="number">1</span> / <span class="number">10.0</span>;</span><br><span class="line">    </span><br><span class="line">    dotLayer.transform = <span class="built_in">CATransform3DMakeScale</span>(<span class="number">0.0</span>, <span class="number">0.0</span>,<span class="number">0.0</span>);</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+        
+
+  <div class="followme">
+    <p>Welcome to my other publishing channels</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/CALayer/" rel="tag"># CALayer</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2016/07/07/iOS%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%BC%80%E5%8F%91/" rel="prev" title="iOS多线程开发">
+      <i class="fa fa-chevron-left"></i> iOS多线程开发
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2016/08/15/Objective-C%E4%B8%AD%E7%9A%84%E5%8D%8F%E8%AE%AE%E4%B8%8E%E5%88%86%E7%B1%BB/" rel="next" title="Objective-C中的协议与分类">
+      Objective-C中的协议与分类 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#锚点"><span class="nav-number">1.</span> <span class="nav-text">锚点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CoreGraphics-amp-amp-QuartzCore"><span class="nav-number">2.</span> <span class="nav-text">CoreGraphics &amp;&amp; QuartzCore</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是CALayer"><span class="nav-number">3.</span> <span class="nav-text">什么是CALayer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建新的图层"><span class="nav-number">4.</span> <span class="nav-text">创建新的图层</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么CALayer中使用CGColorRef和CGImageRef这2种数据类型，而不用UIColor和UIImage？"><span class="nav-number">5.</span> <span class="nav-text">为什么CALayer中使用CGColorRef和CGImageRef这2种数据类型，而不用UIColor和UIImage？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#UIView和CALayer的选择"><span class="nav-number">6.</span> <span class="nav-text">UIView和CALayer的选择</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#UIView和CALayer的其他关系"><span class="nav-number">7.</span> <span class="nav-text">UIView和CALayer的其他关系</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Core-Animation"><span class="nav-number">8.</span> <span class="nav-text">Core Animation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Core-Animation-1"><span class="nav-number">8.1.</span> <span class="nav-text">Core Animation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CAAnimation的常用属性"><span class="nav-number">8.2.</span> <span class="nav-text">CAAnimation的常用属性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#CAPropertyAnimation"><span class="nav-number">8.2.1.</span> <span class="nav-text">CAPropertyAnimation</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="JinsAir"
+      src="/images/header.png">
+  <p class="site-author-name" itemprop="name">JinsAir</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JinsAir</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
