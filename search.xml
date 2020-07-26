@@ -1,6 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>单例block引发的思考</title>
+    <url>/2018/03/24/%E5%8D%95%E4%BE%8Bblock%E5%BC%95%E5%8F%91%E7%9A%84%E6%80%9D%E8%80%83/</url>
+    <content><![CDATA[<!-- toc -->
+
+<p>AFNetworking 框架中的 AFNetworkReachabilityManager 可以用来监听网络状态的变化，经常这样使用：</p>
+<a id="more"></a>
+
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">[[AFNetworkReachabilityManager sharedManager] setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status) &#123;</span><br><span class="line">    <span class="comment">// code...</span></span><br><span class="line">&#125;];</span><br></pre></td></tr></table></figure>
+
+<p>查看源码，会发现 setReachabilityStatusChangeBlock 方法只是单纯的将 block 赋值给了一个普通变量，这说明 block 有被覆盖的风险。</p>
+<h2 id="思考：如何避免单例的block被覆盖"><a href="#思考：如何避免单例的block被覆盖" class="headerlink" title="思考：如何避免单例的block被覆盖"></a>思考：如何避免单例的block被覆盖</h2><p>AFNetworking 的 issue 中也有人提出相同的问题，目前有2种解决方案：</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">在block的回调中发通知</span><br><span class="line">AFNetworking3<span class="number">.0</span> 作者新增了一个 manager 类方法，可以创建一个新的 AFNetworkReachabilityManager 对象，这样就不会造成block被覆盖了</span><br></pre></td></tr></table></figure>
+
+<p>不使用上面2种办法，有没有别的方法可以避免block被覆盖呢？</p>
+<h2 id="集合"><a href="#集合" class="headerlink" title="集合"></a>集合</h2><p><strong>block被覆盖的原因：单例 + 使用普通对象接收block</strong><br>那么可以选择用集合来接收block，选择集合需要考虑2点：</p>
+<ul>
+<li>1、有序/无序</li>
+<li>2、strong/weak</li>
+</ul>
+<p>此处使用有序集合貌似没什么用，使用 strong 的话也就是 NSMutableDictionary ，那么会引入一个新的问题：何时释放 block 呢？那么可以使用 NSMapTable ？将 key 设置为 NSPointerFunctionsWeakMemory ，那么就不用我们手动去释放了</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)addNetworkStatusCallback:(dispatch_block_t)callback &#123;</span><br><span class="line">    [<span class="keyword">self</span>.table setObject:callback forKey:<span class="string">@"UUID"</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>但是由于key是局部变量，所以出了方法后block仍然会被释放，所以得思考到底由谁来持有block。</li>
+<li>根据设计原则：谁注册回调就由谁来管理block，单例仅仅只维护 管理者 与 block 的映射关系。 </li>
+</ul>
+<h2 id="Associated-Object"><a href="#Associated-Object" class="headerlink" title="Associated Object"></a>Associated Object</h2><p>通过关联对象技术将 callback 绑定给 observer，而单例的 NSMapTable 中，key 和 value 都是 weak，仅需要维护 observer 与 callback 的映射关系即可，结构如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &lt;viewController&gt;: &lt;callback&gt;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>单例中实现相应方法：</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)addObserver:(<span class="keyword">id</span>)observer callback:(dispatch_block_t)callback &#123;</span><br><span class="line">    [<span class="keyword">self</span>.table setObject:callback forKey:observer];</span><br><span class="line">    <span class="built_in">NSString</span> *key = [[<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"%p"</span>, &amp;observer] UTF8String];</span><br><span class="line">    objc_setAssociatedObject(observer, key, callback, OBJC_ASSOCIATION_COPY_NONATOMIC);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在 viewController 中可以这样使用 ：</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">[[ObserverSingleton shareInstance] addObserver:<span class="keyword">self</span> callback:^&#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"status callback"</span>);</span><br><span class="line">&#125;];</span><br></pre></td></tr></table></figure>
+
+<p>移除操作</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)removeObserver:(<span class="keyword">id</span>)observer &#123;</span><br><span class="line">    [<span class="keyword">self</span>.table removeObjectForKey:observer];</span><br><span class="line">    <span class="built_in">NSString</span> *key = [[<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"%p"</span>, &amp;observer] UTF8String];</span><br><span class="line">    objc_setAssociatedObject(observer, key, <span class="literal">nil</span>, OBJC_ASSOCIATION_COPY_NONATOMIC);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其实这样处理有一个弊端：使用者很容易觉得 self 与 callback 没有引用关系，实际上得使用weakSelf 才能避免循环引用。</p>
+]]></content>
+      <categories>
+        <category>Objective-C</category>
+      </categories>
+      <tags>
+        <tag>block</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>macOS Catalina 10.15 安装 CocoaPods 步骤</title>
+    <url>/2020/03/24/macOS-Catalina-10-15-%E5%AE%89%E8%A3%85-CocoaPods-%E6%AD%A5%E9%AA%A4/</url>
+    <content><![CDATA[<!-- toc -->
+
+<h5 id="1-检查电脑上的-CocoaPods-版本"><a href="#1-检查电脑上的-CocoaPods-版本" class="headerlink" title="1. 检查电脑上的 CocoaPods 版本"></a>1. 检查电脑上的 CocoaPods 版本</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">pod --version</span><br></pre></td></tr></table></figure>
+<p>输出：zsh: command not found: pod  好的 你果然没有安装CocoaPods</p>
+<a id="more"></a>
+
+<h5 id="2-看下ruby版本"><a href="#2-看下ruby版本" class="headerlink" title="2. 看下ruby版本"></a>2. 看下ruby版本</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ruby -v</span><br></pre></td></tr></table></figure>
+<p>输出：ruby 2.6.3p62 (2019-04-16 revision 67580) [universal.x86_64-darwin19]</p>
+<h5 id="3-查看当前安装的gem源"><a href="#3-查看当前安装的gem源" class="headerlink" title="3. 查看当前安装的gem源"></a>3. 查看当前安装的gem源</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">gem sources -l</span><br></pre></td></tr></table></figure>
+<p>输出：<br><strong>* CURRENT SOURCES *</strong><br><a href="https://rubygems.org/" target="_blank" rel="noopener">https://rubygems.org/</a></p>
+<h5 id="4-移除原有的源"><a href="#4-移除原有的源" class="headerlink" title="4. 移除原有的源"></a>4. 移除原有的源</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">gem sources --remove https:&#x2F;&#x2F;rubygems.org&#x2F;</span><br></pre></td></tr></table></figure>
+
+<p>输出：<a href="https://rubygems.org/" target="_blank" rel="noopener">https://rubygems.org/</a> removed from sources<br>移除成功</p>
+<h5 id="5-添加ruby-china的源"><a href="#5-添加ruby-china的源" class="headerlink" title="5. 添加ruby-china的源"></a>5. 添加ruby-china的源</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">gem sources -a https:&#x2F;&#x2F;gems.ruby-china.com&#x2F;</span><br></pre></td></tr></table></figure>
+<p>输出：<a href="https://gems.ruby-china.com/" target="_blank" rel="noopener">https://gems.ruby-china.com/</a> added to sources<br>添加成功</p>
+<h5 id="6-安装"><a href="#6-安装" class="headerlink" title="6. 安装"></a>6. 安装</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo gem install cocoapods</span><br></pre></td></tr></table></figure>
+
+<p>输出结果：… 32 gems installed.<br>安装完成</p>
+]]></content>
+      <categories>
+        <category>iOS</category>
+      </categories>
+      <tags>
+        <tag>CocoaPods</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Git常用指令</title>
     <url>/2018/03/24/Git%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</url>
     <content><![CDATA[<!-- TOC -->
@@ -56,83 +133,6 @@ $ git stash list</code></pre>
       </categories>
       <tags>
         <tag>Git</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>macOS Catalina 10.15 安装 CocoaPods 步骤</title>
-    <url>/2020/03/24/macOS-Catalina-10-15-%E5%AE%89%E8%A3%85-CocoaPods-%E6%AD%A5%E9%AA%A4/</url>
-    <content><![CDATA[<!-- toc -->
-
-<h5 id="1-检查电脑上的-CocoaPods-版本"><a href="#1-检查电脑上的-CocoaPods-版本" class="headerlink" title="1. 检查电脑上的 CocoaPods 版本"></a>1. 检查电脑上的 CocoaPods 版本</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">pod --version</span><br></pre></td></tr></table></figure>
-<p>输出：zsh: command not found: pod  好的 你果然没有安装CocoaPods</p>
-<a id="more"></a>
-
-<h5 id="2-看下ruby版本"><a href="#2-看下ruby版本" class="headerlink" title="2. 看下ruby版本"></a>2. 看下ruby版本</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ruby -v</span><br></pre></td></tr></table></figure>
-<p>输出：ruby 2.6.3p62 (2019-04-16 revision 67580) [universal.x86_64-darwin19]</p>
-<h5 id="3-查看当前安装的gem源"><a href="#3-查看当前安装的gem源" class="headerlink" title="3. 查看当前安装的gem源"></a>3. 查看当前安装的gem源</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">gem sources -l</span><br></pre></td></tr></table></figure>
-<p>输出：<br><strong>* CURRENT SOURCES *</strong><br><a href="https://rubygems.org/" target="_blank" rel="noopener">https://rubygems.org/</a></p>
-<h5 id="4-移除原有的源"><a href="#4-移除原有的源" class="headerlink" title="4. 移除原有的源"></a>4. 移除原有的源</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">gem sources --remove https:&#x2F;&#x2F;rubygems.org&#x2F;</span><br></pre></td></tr></table></figure>
-
-<p>输出：<a href="https://rubygems.org/" target="_blank" rel="noopener">https://rubygems.org/</a> removed from sources<br>移除成功</p>
-<h5 id="5-添加ruby-china的源"><a href="#5-添加ruby-china的源" class="headerlink" title="5. 添加ruby-china的源"></a>5. 添加ruby-china的源</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">gem sources -a https:&#x2F;&#x2F;gems.ruby-china.com&#x2F;</span><br></pre></td></tr></table></figure>
-<p>输出：<a href="https://gems.ruby-china.com/" target="_blank" rel="noopener">https://gems.ruby-china.com/</a> added to sources<br>添加成功</p>
-<h5 id="6-安装"><a href="#6-安装" class="headerlink" title="6. 安装"></a>6. 安装</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo gem install cocoapods</span><br></pre></td></tr></table></figure>
-
-<p>输出结果：… 32 gems installed.<br>安装完成</p>
-]]></content>
-      <categories>
-        <category>iOS</category>
-      </categories>
-      <tags>
-        <tag>CocoaPods</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>单例block引发的思考</title>
-    <url>/2018/03/24/%E5%8D%95%E4%BE%8Bblock%E5%BC%95%E5%8F%91%E7%9A%84%E6%80%9D%E8%80%83/</url>
-    <content><![CDATA[<!-- toc -->
-
-<p>AFNetworking 框架中的 AFNetworkReachabilityManager 可以用来监听网络状态的变化，经常这样使用：</p>
-<a id="more"></a>
-
-<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">[[AFNetworkReachabilityManager sharedManager] setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status) &#123;</span><br><span class="line">    <span class="comment">// code...</span></span><br><span class="line">&#125;];</span><br></pre></td></tr></table></figure>
-
-<p>查看源码，会发现 setReachabilityStatusChangeBlock 方法只是单纯的将 block 赋值给了一个普通变量，这说明 block 有被覆盖的风险。</p>
-<h2 id="思考：如何避免单例的block被覆盖"><a href="#思考：如何避免单例的block被覆盖" class="headerlink" title="思考：如何避免单例的block被覆盖"></a>思考：如何避免单例的block被覆盖</h2><p>AFNetworking 的 issue 中也有人提出相同的问题，目前有2种解决方案：</p>
-<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">在block的回调中发通知</span><br><span class="line">AFNetworking3<span class="number">.0</span> 作者新增了一个 manager 类方法，可以创建一个新的 AFNetworkReachabilityManager 对象，这样就不会造成block被覆盖了</span><br></pre></td></tr></table></figure>
-
-<p>不使用上面2种办法，有没有别的方法可以避免block被覆盖呢？</p>
-<h2 id="集合"><a href="#集合" class="headerlink" title="集合"></a>集合</h2><p><strong>block被覆盖的原因：单例 + 使用普通对象接收block</strong><br>那么可以选择用集合来接收block，选择集合需要考虑2点：</p>
-<ul>
-<li>1、有序/无序</li>
-<li>2、strong/weak</li>
-</ul>
-<p>此处使用有序集合貌似没什么用，使用 strong 的话也就是 NSMutableDictionary ，那么会引入一个新的问题：何时释放 block 呢？那么可以使用 NSMapTable ？将 key 设置为 NSPointerFunctionsWeakMemory ，那么就不用我们手动去释放了</p>
-<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)addNetworkStatusCallback:(dispatch_block_t)callback &#123;</span><br><span class="line">    [<span class="keyword">self</span>.table setObject:callback forKey:<span class="string">@"UUID"</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>但是由于key是局部变量，所以出了方法后block仍然会被释放，所以得思考到底由谁来持有block。</li>
-<li>根据设计原则：谁注册回调就由谁来管理block，单例仅仅只维护 管理者 与 block 的映射关系。 </li>
-</ul>
-<h2 id="Associated-Object"><a href="#Associated-Object" class="headerlink" title="Associated Object"></a>Associated Object</h2><p>通过关联对象技术将 callback 绑定给 observer，而单例的 NSMapTable 中，key 和 value 都是 weak，仅需要维护 observer 与 callback 的映射关系即可，结构如下：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &lt;viewController&gt;: &lt;callback&gt;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>单例中实现相应方法：</p>
-<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)addObserver:(<span class="keyword">id</span>)observer callback:(dispatch_block_t)callback &#123;</span><br><span class="line">    [<span class="keyword">self</span>.table setObject:callback forKey:observer];</span><br><span class="line">    <span class="built_in">NSString</span> *key = [[<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"%p"</span>, &amp;observer] UTF8String];</span><br><span class="line">    objc_setAssociatedObject(observer, key, callback, OBJC_ASSOCIATION_COPY_NONATOMIC);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>在 viewController 中可以这样使用 ：</p>
-<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">[[ObserverSingleton shareInstance] addObserver:<span class="keyword">self</span> callback:^&#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"status callback"</span>);</span><br><span class="line">&#125;];</span><br></pre></td></tr></table></figure>
-
-<p>移除操作</p>
-<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)removeObserver:(<span class="keyword">id</span>)observer &#123;</span><br><span class="line">    [<span class="keyword">self</span>.table removeObjectForKey:observer];</span><br><span class="line">    <span class="built_in">NSString</span> *key = [[<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"%p"</span>, &amp;observer] UTF8String];</span><br><span class="line">    objc_setAssociatedObject(observer, key, <span class="literal">nil</span>, OBJC_ASSOCIATION_COPY_NONATOMIC);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>其实这样处理有一个弊端：使用者很容易觉得 self 与 callback 没有引用关系，实际上得使用weakSelf 才能避免循环引用。</p>
-]]></content>
-      <categories>
-        <category>Objective-C</category>
-      </categories>
-      <tags>
-        <tag>block</tag>
       </tags>
   </entry>
   <entry>
