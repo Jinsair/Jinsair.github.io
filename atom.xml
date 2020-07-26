@@ -41,29 +41,6 @@
   </entry>
   
   <entry>
-    <title>单例block引发的思考</title>
-    <link href="http://yoursite.com/2018/03/24/%E5%8D%95%E4%BE%8Bblock%E5%BC%95%E5%8F%91%E7%9A%84%E6%80%9D%E8%80%83/"/>
-    <id>http://yoursite.com/2018/03/24/%E5%8D%95%E4%BE%8Bblock%E5%BC%95%E5%8F%91%E7%9A%84%E6%80%9D%E8%80%83/</id>
-    <published>2018-03-24T07:11:39.000Z</published>
-    <updated>2020-07-24T14:34:03.800Z</updated>
-    
-    <summary type="html">
-    
-      &lt;!-- toc --&gt;
-
-&lt;p&gt;AFNetworking 框架中的 AFNetworkReachabilityManager 可以用来监听网络状态的变化，经常这样使用：&lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="Objective-C" scheme="http://yoursite.com/categories/Objective-C/"/>
-    
-    
-      <category term="block" scheme="http://yoursite.com/tags/block/"/>
-    
-  </entry>
-  
-  <entry>
     <title>Git常用指令</title>
     <link href="http://yoursite.com/2018/03/24/Git%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/"/>
     <id>http://yoursite.com/2018/03/24/Git%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</id>
@@ -84,6 +61,29 @@
     
     
       <category term="Git" scheme="http://yoursite.com/tags/Git/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>单例block引发的思考</title>
+    <link href="http://yoursite.com/2018/03/24/%E5%8D%95%E4%BE%8Bblock%E5%BC%95%E5%8F%91%E7%9A%84%E6%80%9D%E8%80%83/"/>
+    <id>http://yoursite.com/2018/03/24/%E5%8D%95%E4%BE%8Bblock%E5%BC%95%E5%8F%91%E7%9A%84%E6%80%9D%E8%80%83/</id>
+    <published>2018-03-24T07:11:39.000Z</published>
+    <updated>2020-07-24T14:34:03.800Z</updated>
+    
+    <summary type="html">
+    
+      &lt;!-- toc --&gt;
+
+&lt;p&gt;AFNetworking 框架中的 AFNetworkReachabilityManager 可以用来监听网络状态的变化，经常这样使用：&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="Objective-C" scheme="http://yoursite.com/categories/Objective-C/"/>
+    
+    
+      <category term="block" scheme="http://yoursite.com/tags/block/"/>
     
   </entry>
   
