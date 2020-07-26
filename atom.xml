@@ -41,6 +41,28 @@
   </entry>
   
   <entry>
+    <title>iOS集成Sentry捕获异常</title>
+    <link href="http://yoursite.com/2020/02/27/iOS%E9%9B%86%E6%88%90Sentry%E6%8D%95%E8%8E%B7%E5%BC%82%E5%B8%B8/"/>
+    <id>http://yoursite.com/2020/02/27/iOS%E9%9B%86%E6%88%90Sentry%E6%8D%95%E8%8E%B7%E5%BC%82%E5%B8%B8/</id>
+    <published>2020-02-27T06:06:04.000Z</published>
+    <updated>2020-07-26T16:37:37.192Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;&lt;img src=&quot;https://i.loli.net/2020/07/27/1C6pm3SeZl5iJEu.png&quot; alt=&quot;sentry官网.png&quot;&gt;&lt;/p&gt;
+&lt;p&gt;iOS端异常捕获常用工具有很多，国内有腾讯的Bugly，国外有Sentry，我们选择了Sentry，因为Sentry是开源的，支持搭建在自己的服务器上（self-hosted）。Sentry提供了三种类型的账号：Developer、Team、Business，Developer是免费的，但功能有限且异常记录最多每个月5k条，推荐自己搭建服务器，这样就不会有记录数量限制了，Sentry官方文档有详细的self-hosted教程，这里不再赘述。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="iOS" scheme="http://yoursite.com/categories/iOS/"/>
+    
+    
+      <category term="Tools" scheme="http://yoursite.com/tags/Tools/"/>
+    
+  </entry>
+  
+  <entry>
     <title>Git常用指令</title>
     <link href="http://yoursite.com/2018/03/24/Git%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/"/>
     <id>http://yoursite.com/2018/03/24/Git%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</id>

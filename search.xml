@@ -1,6 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>iOS集成Sentry捕获异常</title>
+    <url>/2020/02/27/iOS%E9%9B%86%E6%88%90Sentry%E6%8D%95%E8%8E%B7%E5%BC%82%E5%B8%B8/</url>
+    <content><![CDATA[<p><img src="https://i.loli.net/2020/07/27/1C6pm3SeZl5iJEu.png" alt="sentry官网.png"></p>
+<p>iOS端异常捕获常用工具有很多，国内有腾讯的Bugly，国外有Sentry，我们选择了Sentry，因为Sentry是开源的，支持搭建在自己的服务器上（self-hosted）。Sentry提供了三种类型的账号：Developer、Team、Business，Developer是免费的，但功能有限且异常记录最多每个月5k条，推荐自己搭建服务器，这样就不会有记录数量限制了，Sentry官方文档有详细的self-hosted教程，这里不再赘述。</p>
+<a id="more"></a>
+
+<p><a href="https://sentry.io/" target="_blank" rel="noopener">Sentry官网</a>注册完帐后之后会让你选择一个平台，这里我们可以选择Objective-C或Swift：</p>
+<p><img src="https://i.loli.net/2020/07/27/qgKEFRhVdjU4t3S.png" alt="sentry选择@2x.png"></p>
+<p>然后找到项目设置选择Client Keys(DSN)，复制DSN后面代码中需要用到（如果是self-hosted则是Public DSN）；</p>
+<h4 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h4><p>1、使用CocoaPods导入Sentry；<br>2、在AppDelegate的didFinishLaunchingWithOptions:方法中启动Sentry；</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line">- (void)startSentry &#123;</span><br><span class="line">    <span class="type">NSError</span> *error = <span class="literal">nil</span>;</span><br><span class="line">    <span class="comment">// 根据DSN创建SentryClient</span></span><br><span class="line">    <span class="type">SentryClient</span> *client = [[<span class="type">SentryClient</span> alloc] initWithDsn:kSentryDSN didFailWithError:&amp;error];</span><br><span class="line">    <span class="type">SentryClient</span>.sharedClient = client;</span><br><span class="line">    [<span class="type">SentryClient</span>.sharedClient startCrashHandlerWithError:&amp;error];</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (<span class="literal">nil</span> != error) &#123;</span><br><span class="line">        <span class="type">NSLog</span>(@<span class="string">"%@"</span>, error);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Sentry提供了一系列属性，供我们自定义一些信息；</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="type">SentryClient</span>.sharedClient.environment = environment; <span class="comment">// 环境 例如：debug</span></span><br><span class="line">[<span class="type">SentryClient</span>.sharedClient enableAutomaticBreadcrumbTracking]; <span class="comment">// 开启面包屑功能</span></span><br><span class="line"><span class="type">SentryClient</span>.sharedClient.maxBreadcrumbs = <span class="number">30</span>; <span class="comment">// 面包屑最多栈数</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 用户信息</span></span><br><span class="line"><span class="type">SentryUser</span> *user = [[<span class="type">SentryUser</span> alloc] initWithUserId:guid]; <span class="comment">// 日志记录以此区别、归类不同用户</span></span><br><span class="line">user.username = userName;</span><br><span class="line">user.extra = @&#123;@<span class="string">"cellphone"</span>:cellphone&#125;; <span class="comment">// 自定义字段用户信息</span></span><br><span class="line"><span class="type">SentryClient</span>.sharedClient.user = user;</span><br><span class="line"></span><br><span class="line"><span class="type">SentryClient</span>.sharedClient.extra = @&#123;@<span class="string">"other"</span>:otherMsg&#125;; <span class="comment">// 自定义字段信息</span></span><br></pre></td></tr></table></figure>
+
+<p>Sentry也支持自定义异常事件并抛出</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="type">SentryEvent</span> *event = [[<span class="type">SentryEvent</span> alloc] initWithLevel:kSentrySeverityWarning]; <span class="comment">// 指定事件的严重级别 Fatal/Error/Warnig</span></span><br><span class="line">event.message = message; <span class="comment">// 错误信息</span></span><br><span class="line">event.environment = environment;</span><br><span class="line">event.extra =@&#123;@<span class="string">"url"</span>:url,@<span class="string">"code"</span>:@(code),@<span class="string">"param"</span>:param&#125;; <span class="comment">// 自定义字段</span></span><br><span class="line">[<span class="type">SentryClient</span>.sharedClient sendEvent:event withCompletionHandler:^(<span class="type">NSError</span> * _Nullable error) &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="literal">nil</span> != error) &#123;</span><br><span class="line">        <span class="type">NSLog</span>(@<span class="string">"%@"</span>, error);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;];</span><br></pre></td></tr></table></figure>
+<p>至此，iOS端的编码工作已经完成，但是还有重要的一步操作没有做</p>
+<h4 id="上传dSYM文件"><a href="#上传dSYM文件" class="headerlink" title="上传dSYM文件"></a>上传dSYM文件</h4><p>sentry平台创建Token：User Setting —-&gt; Auth Tokens —&gt; Create New Token；创建时按需勾选选项；<br>拿到Token后就可以上传文件了，这里有2种上传方式：</p>
+<ul>
+<li><p>shell脚本上传</p>
+<ol>
+<li>打包后拿到dSYM文件；</li>
+<li>安装sentry-cli：<code>brew install getsentry/tools/sentry-cli</code></li>
+<li>运行脚本：<code>sentry-cli --url URL --auth-token YOUR_TOKEN upload-dif --org YOUR_ORG --project  YOUR_PROJECT   dSYM_PATH --log-level=debug</code>（其中URL如果是sentry服务器则是<a href="https://sentry.io，" target="_blank" rel="noopener">https://sentry.io，</a> 如果是self-hosted则填写自己服务器url）</li>
+</ol>
+</li>
+<li><p>fastlane上传（待补充）</p>
+</li>
+</ul>
+<p>dSYM文件上传成功后，Sentry项目设置中Debug Files就能看到文件了，之后再次捕获crash异常，查看堆栈信息就已经能解析出具体的方法了。</p>
+]]></content>
+      <categories>
+        <category>iOS</category>
+      </categories>
+      <tags>
+        <tag>Tools</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Cocoa 集合类型：NSPointerArray，NSMapTable，NSHashTable</title>
     <url>/2017/08/24/Cocoa%E9%9B%86%E5%90%88%E7%B1%BB%E5%9E%8B%EF%BC%9ANSPointerArra%E3%80%81NSMapTable%E3%80%81NSHashTable/</url>
     <content><![CDATA[<!-- toc -->
@@ -89,35 +129,6 @@ int main(int argc, const char * argv[]) {
       </tags>
   </entry>
   <entry>
-    <title>macOS Catalina 10.15 安装 CocoaPods 步骤</title>
-    <url>/2020/03/24/macOS-Catalina-10-15-%E5%AE%89%E8%A3%85-CocoaPods-%E6%AD%A5%E9%AA%A4/</url>
-    <content><![CDATA[<!-- toc -->
-
-<h5 id="1-检查电脑上的-CocoaPods-版本"><a href="#1-检查电脑上的-CocoaPods-版本" class="headerlink" title="1. 检查电脑上的 CocoaPods 版本"></a>1. 检查电脑上的 CocoaPods 版本</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">pod --version</span><br></pre></td></tr></table></figure>
-<p>输出：zsh: command not found: pod  好的 你果然没有安装CocoaPods</p>
-<a id="more"></a>
-
-<h5 id="2-看下ruby版本"><a href="#2-看下ruby版本" class="headerlink" title="2. 看下ruby版本"></a>2. 看下ruby版本</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ruby -v</span><br></pre></td></tr></table></figure>
-<p>输出：ruby 2.6.3p62 (2019-04-16 revision 67580) [universal.x86_64-darwin19]</p>
-<h5 id="3-查看当前安装的gem源"><a href="#3-查看当前安装的gem源" class="headerlink" title="3. 查看当前安装的gem源"></a>3. 查看当前安装的gem源</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">gem sources -l</span><br></pre></td></tr></table></figure>
-<p>输出：<br><strong>* CURRENT SOURCES *</strong><br><a href="https://rubygems.org/" target="_blank" rel="noopener">https://rubygems.org/</a></p>
-<h5 id="4-移除原有的源"><a href="#4-移除原有的源" class="headerlink" title="4. 移除原有的源"></a>4. 移除原有的源</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">gem sources --remove https:&#x2F;&#x2F;rubygems.org&#x2F;</span><br></pre></td></tr></table></figure>
-
-<p>输出：<a href="https://rubygems.org/" target="_blank" rel="noopener">https://rubygems.org/</a> removed from sources<br>移除成功</p>
-<h5 id="5-添加ruby-china的源"><a href="#5-添加ruby-china的源" class="headerlink" title="5. 添加ruby-china的源"></a>5. 添加ruby-china的源</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">gem sources -a https:&#x2F;&#x2F;gems.ruby-china.com&#x2F;</span><br></pre></td></tr></table></figure>
-<p>输出：<a href="https://gems.ruby-china.com/" target="_blank" rel="noopener">https://gems.ruby-china.com/</a> added to sources<br>添加成功</p>
-<h5 id="6-安装"><a href="#6-安装" class="headerlink" title="6. 安装"></a>6. 安装</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo gem install cocoapods</span><br></pre></td></tr></table></figure>
-
-<p>输出结果：… 32 gems installed.<br>安装完成</p>
-]]></content>
-      <categories>
-        <category>iOS</category>
-      </categories>
-      <tags>
-        <tag>CocoaPods</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Git常用指令</title>
     <url>/2018/03/24/Git%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</url>
     <content><![CDATA[<!-- TOC -->
@@ -173,6 +184,35 @@ $ git stash list</code></pre>
       </categories>
       <tags>
         <tag>Git</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>macOS Catalina 10.15 安装 CocoaPods 步骤</title>
+    <url>/2020/03/24/macOS-Catalina-10-15-%E5%AE%89%E8%A3%85-CocoaPods-%E6%AD%A5%E9%AA%A4/</url>
+    <content><![CDATA[<!-- toc -->
+
+<h5 id="1-检查电脑上的-CocoaPods-版本"><a href="#1-检查电脑上的-CocoaPods-版本" class="headerlink" title="1. 检查电脑上的 CocoaPods 版本"></a>1. 检查电脑上的 CocoaPods 版本</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">pod --version</span><br></pre></td></tr></table></figure>
+<p>输出：zsh: command not found: pod  好的 你果然没有安装CocoaPods</p>
+<a id="more"></a>
+
+<h5 id="2-看下ruby版本"><a href="#2-看下ruby版本" class="headerlink" title="2. 看下ruby版本"></a>2. 看下ruby版本</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ruby -v</span><br></pre></td></tr></table></figure>
+<p>输出：ruby 2.6.3p62 (2019-04-16 revision 67580) [universal.x86_64-darwin19]</p>
+<h5 id="3-查看当前安装的gem源"><a href="#3-查看当前安装的gem源" class="headerlink" title="3. 查看当前安装的gem源"></a>3. 查看当前安装的gem源</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">gem sources -l</span><br></pre></td></tr></table></figure>
+<p>输出：<br><strong>* CURRENT SOURCES *</strong><br><a href="https://rubygems.org/" target="_blank" rel="noopener">https://rubygems.org/</a></p>
+<h5 id="4-移除原有的源"><a href="#4-移除原有的源" class="headerlink" title="4. 移除原有的源"></a>4. 移除原有的源</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">gem sources --remove https:&#x2F;&#x2F;rubygems.org&#x2F;</span><br></pre></td></tr></table></figure>
+
+<p>输出：<a href="https://rubygems.org/" target="_blank" rel="noopener">https://rubygems.org/</a> removed from sources<br>移除成功</p>
+<h5 id="5-添加ruby-china的源"><a href="#5-添加ruby-china的源" class="headerlink" title="5. 添加ruby-china的源"></a>5. 添加ruby-china的源</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">gem sources -a https:&#x2F;&#x2F;gems.ruby-china.com&#x2F;</span><br></pre></td></tr></table></figure>
+<p>输出：<a href="https://gems.ruby-china.com/" target="_blank" rel="noopener">https://gems.ruby-china.com/</a> added to sources<br>添加成功</p>
+<h5 id="6-安装"><a href="#6-安装" class="headerlink" title="6. 安装"></a>6. 安装</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo gem install cocoapods</span><br></pre></td></tr></table></figure>
+
+<p>输出结果：… 32 gems installed.<br>安装完成</p>
+]]></content>
+      <categories>
+        <category>iOS</category>
+      </categories>
+      <tags>
+        <tag>CocoaPods</tag>
       </tags>
   </entry>
   <entry>
