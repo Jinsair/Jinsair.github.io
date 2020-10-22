@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-07-24T14:48:11.972Z</updated>
+  <updated>2020-10-22T02:26:46.471Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,31 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>CocoaPods相关命令记录</title>
+    <link href="http://yoursite.com/2020/10/22/cocoaPods%E7%9B%B8%E5%85%B3%E5%91%BD%E4%BB%A4%E8%AE%B0%E5%BD%95/"/>
+    <id>http://yoursite.com/2020/10/22/cocoaPods%E7%9B%B8%E5%85%B3%E5%91%BD%E4%BB%A4%E8%AE%B0%E5%BD%95/</id>
+    <published>2020-10-22T02:13:16.000Z</published>
+    <updated>2020-10-22T02:26:46.471Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h1 id=&quot;CocoaPods相关命令记录&quot;&gt;&lt;a href=&quot;#CocoaPods相关命令记录&quot; class=&quot;headerlink&quot; title=&quot;CocoaPods相关命令记录&quot;&gt;&lt;/a&gt;CocoaPods相关命令记录&lt;/h1&gt;&lt;p&gt;1.只安装/删除
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="CocoaPods" scheme="http://yoursite.com/tags/CocoaPods/"/>
+    
+  </entry>
   
   <entry>
     <title>macOS Catalina 10.15 安装 CocoaPods 步骤</title>
@@ -178,6 +203,29 @@
   </entry>
   
   <entry>
+    <title>单例block引发的思考</title>
+    <link href="http://yoursite.com/2018/03/24/%E5%8D%95%E4%BE%8Bblock%E5%BC%95%E5%8F%91%E7%9A%84%E6%80%9D%E8%80%83/"/>
+    <id>http://yoursite.com/2018/03/24/%E5%8D%95%E4%BE%8Bblock%E5%BC%95%E5%8F%91%E7%9A%84%E6%80%9D%E8%80%83/</id>
+    <published>2018-03-24T07:11:39.000Z</published>
+    <updated>2020-07-24T14:34:03.800Z</updated>
+    
+    <summary type="html">
+    
+      &lt;!-- toc --&gt;
+
+&lt;p&gt;AFNetworking 框架中的 AFNetworkReachabilityManager 可以用来监听网络状态的变化，经常这样使用：&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="Objective-C" scheme="http://yoursite.com/categories/Objective-C/"/>
+    
+    
+      <category term="block" scheme="http://yoursite.com/tags/block/"/>
+    
+  </entry>
+  
+  <entry>
     <title>Git常用指令</title>
     <link href="http://yoursite.com/2018/03/24/Git%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/"/>
     <id>http://yoursite.com/2018/03/24/Git%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</id>
@@ -198,29 +246,6 @@
     
     
       <category term="Git" scheme="http://yoursite.com/tags/Git/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>单例block引发的思考</title>
-    <link href="http://yoursite.com/2018/03/24/%E5%8D%95%E4%BE%8Bblock%E5%BC%95%E5%8F%91%E7%9A%84%E6%80%9D%E8%80%83/"/>
-    <id>http://yoursite.com/2018/03/24/%E5%8D%95%E4%BE%8Bblock%E5%BC%95%E5%8F%91%E7%9A%84%E6%80%9D%E8%80%83/</id>
-    <published>2018-03-24T07:11:39.000Z</published>
-    <updated>2020-07-24T14:34:03.800Z</updated>
-    
-    <summary type="html">
-    
-      &lt;!-- toc --&gt;
-
-&lt;p&gt;AFNetworking 框架中的 AFNetworkReachabilityManager 可以用来监听网络状态的变化，经常这样使用：&lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="Objective-C" scheme="http://yoursite.com/categories/Objective-C/"/>
-    
-    
-      <category term="block" scheme="http://yoursite.com/tags/block/"/>
     
   </entry>
   
@@ -470,35 +495,6 @@
     
     
       <category term="CALayer" scheme="http://yoursite.com/tags/CALayer/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>iOS多线程开发</title>
-    <link href="http://yoursite.com/2016/07/07/iOS%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%BC%80%E5%8F%91/"/>
-    <id>http://yoursite.com/2016/07/07/iOS%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%BC%80%E5%8F%91/</id>
-    <published>2016-07-07T12:18:09.000Z</published>
-    <updated>2018-08-15T06:15:26.000Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;!--[TOC]--&gt; 
-
-
-&lt;p&gt;前言：多线程技术在iOS日常开发里处处可见，它也是面试时面试官的偏爱，之前面试时没注意这方面的总结，被面试官虐的很惨😂。 &lt;/p&gt;
-&lt;h3 id=&quot;进程和线程的定义&quot;&gt;&lt;a href=&quot;#进程和线程的定义&quot;
-        
-      
-    
-    </summary>
-    
-    
-    
-      <category term="多线程" scheme="http://yoursite.com/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/"/>
     
   </entry>
   

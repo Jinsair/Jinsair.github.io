@@ -1,6 +1,169 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Cocoa 集合类型：NSPointerArray，NSMapTable，NSHashTable</title>
+    <url>/2017/08/24/Cocoa%E9%9B%86%E5%90%88%E7%B1%BB%E5%9E%8B%EF%BC%9ANSPointerArra%E3%80%81NSMapTable%E3%80%81NSHashTable/</url>
+    <content><![CDATA[<!-- toc -->
+
+<p>在iOS6之后新增了NSPointerArray，NSMapTable，NSHashTable三种集合，分别拓展了NSArray、NSDictionary、NSSet的功能。</p>
+<a id="more"></a> 
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F; NSPointerArray，NSMapTable，NSHashTable</span><br><span class="line">API_AVAILABLE(macos(10.5), ios(6.0), watchos(2.0), tvos(9.0))</span><br></pre></td></tr></table></figure>
+
+<p>传统集合类型的短板：</p>
+<ul>
+<li>只能强引用放入集合中的对象</li>
+<li>如果想要弱引用，只能通过NSValue包装</li>
+<li>不能放入nil</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">/// NSValue的这个方法可以保持对对象的弱引用</span></span><br><span class="line">+ (<span class="type">NSValue</span> *)valueWithNonretainedObject:(nullable id)anObject;</span><br></pre></td></tr></table></figure>
+
+<p>而新增的这三种集合，解决了以上问题，他们都使用了NSPointerFunctionsOptions和NSPointerFunctions来决定内存管理等方式，先来看下它们：</p>
+<p><strong>NSPointerFunctionsOptions</strong><br>它是CF_OPTIONS类型的，用法与CF_ENUM类似，一共分为三类：</p>
+<ul>
+<li>内存管理方式</li>
+<li>对象判等方式</li>
+<li>内存标识方式</li>
+</ul>
+<p>例如：需要弱引用成员、使用对象方式对比、并且 add 时 copy 对象，则可以这么写：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="type">NSPointerFunctionsOptions</span> *options = <span class="type">NSPointerFunctionsWeakMemory</span> | <span class="type">NSPointerFunctionsObjectPersonality</span> | <span class="type">NSPointerFunctionsCopyIn</span>;</span><br></pre></td></tr></table></figure>
+
+<p>具体类型在此不再赘述</p>
+<p><strong>NSPointerFunctions</strong><br>是自定义成员的处理方式，如内存管理、对象判等，他们都是函数指针，用法如下</p>
+<pre><code class="Swift"><span class="keyword">static</span> <span class="type">BOOL</span> <span class="type">IsEqual</span>(const void *item1, const void *item2, <span class="type">NSUInteger</span> (*size)(const void *item)) {
+    <span class="keyword">return</span> *(const int *)item1 == *(const int *)item2;
+}
+
+<span class="type">NSPointerFunctions</span> *functions = [[<span class="type">NSPointerFunctions</span> alloc] <span class="keyword">init</span>];
+[functions setIsEqualFunction:<span class="type">IsEqual</span>];</code></pre>
+<h2 id="1-NSPointerArray"><a href="#1-NSPointerArray" class="headerlink" title="1.NSPointerArray"></a>1.NSPointerArray</h2><p><strong>特点：</strong></p>
+<ul>
+<li>与 NSArray 不同，它可以存储 NULL，并且 NULL 还参与 count 的计算</li>
+<li>count 可以 set，如果直接 set count，那么会使用 NULL 占位</li>
+<li>可以使用 weak 来修饰成员</li>
+<li>成员可以是所有指针类型 </li>
+</ul>
+<p><strong>初始化方法：</strong></p>
+<pre><code class="Swift">- (instancetype)initWithOptions:(<span class="type">NSPointerFunctionsOptions</span>)options;
+- (instancetype)initWithPointerFunctions:(<span class="type">NSPointerFunctions</span> *)functions; </code></pre>
+<p><strong>compact方法</strong><br>NSPointerArray可以添加NULL，同样API提供了compact方法用于剔除所有NULL<br>⚠️我们主动添加的NULL的时候，会被标记，之后调用compact的时候，所有NULL会被标记，但是我们直接set count或者成员已经被释放，此时并不会被标记，我们可以在调用compact之前手动给添加一个NULL来打上标记：</p>
+<pre><code class="Swift">[array addPointer:<span class="type">NULL</span>];
+[array compact];</code></pre>
+<h2 id="2-NSMapTable"><a href="#2-NSMapTable" class="headerlink" title="2.NSMapTable"></a>2.NSMapTable</h2><p><strong>特点：</strong></p>
+<ul>
+<li>key 可以不用遵循 NSCopying 协议</li>
+<li>key 和 value 的内存管理方式可以分开，如：key 是强引用，value 是弱引用</li>
+<li>当用 weak 修饰 key 或 value 时，有一方被释放，则该键值对移除</li>
+</ul>
+<h2 id="3-NSHashTable"><a href="#3-NSHashTable" class="headerlink" title="3.NSHashTable"></a>3.NSHashTable</h2><p><strong>特点：</strong>  </p>
+<ul>
+<li>与<strong>NSPointerArray</strong>一样可以根据NSPointerFunctionsOptions来决定对对象的内存管理方式</li>
+</ul>
+<p>最后来一个NSHashTable的demo验证一下</p>
+<pre><code class="Swift"><span class="comment">// demo </span>
+int main(int argc, const char * argv[]) {    
+    <span class="type">NSHashTable</span> *hashTable = [<span class="type">NSHashTable</span> hashTableWithOptions:<span class="type">NSPointerFunctionsWeakMemory</span>];
+    @autoreleasepool {
+        <span class="type">NSObject</span> *obj = [[<span class="type">NSObject</span> alloc] <span class="keyword">init</span>];
+        [hashTable addObject:obj];
+        <span class="type">NSLog</span>(@<span class="string">"before-----%@"</span>, hashTable);
+        <span class="type">NSLog</span>(@<span class="string">"before-----%ld"</span>, hashTable.<span class="built_in">count</span>);
+    }
+    <span class="type">NSLog</span>(@<span class="string">"after-----%@"</span>, hashTable);
+    <span class="type">NSLog</span>(@<span class="string">"after-----%ld"</span>, hashTable.<span class="built_in">count</span>);
+}   
+<span class="comment">// 结果</span>
+...before-----<span class="type">NSHashTable</span> {
+...[<span class="number">15</span>] &lt;<span class="type">NSObject</span>: <span class="number">0x10056a6d0</span>&gt;
+...}
+...before-----<span class="number">1</span>
+...after-----<span class="type">NSHashTable</span> {
+...} 
+...after-----<span class="number">1</span>  <span class="comment">//虽然obj被释放了，但是NULL仍然会被计数</span></code></pre>
+]]></content>
+      <categories>
+        <category>Objective-C</category>
+      </categories>
+      <tags>
+        <tag>集合</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>CoreData</title>
+    <url>/2019/02/01/CoreData/</url>
+    <content><![CDATA[<h1 id="1-创建托管对象模型"><a href="#1-创建托管对象模型" class="headerlink" title="1. 创建托管对象模型"></a>1. 创建托管对象模型</h1><p>CoreData的很多功能都依赖于你创建的实体类的描述、属性、关系的模式。CoreData使用一个名为托管对象模型的模式——<code>NSManagedObjectModel</code>的实例。一般来说，模型越丰富，CoreData支持你编写的应用程序的能力就越强。</p>
+<p>托管对象模型允许CoreData从持久存储中的记录映射到应用程序中使用的托管对象。模型是实体描述对象(<code>NSEntityDescription</code>的实例)的集合。实体描述根据实体的名称、用于表示应用程序中的实体的类的名称以及它具有哪些属性(属性和关系)来描述实体(可以将其视为数据库中的表)。</p>
+<h2 id="创建实体和实体的属性"><a href="#创建实体和实体的属性" class="headerlink" title="创建实体和实体的属性"></a>创建实体和实体的属性</h2><p>在Xcode中启动新项目并打开模板选择对话框时，选择Use Core Data。CoreData模型的源文件会作为模板的一部分创建，该源文件的扩展名为<code>.xcdatamodeld</code>。在导航区域中选择该文件以显示CoreData模型编辑器。</p>
+<h2 id="实体名和类名"><a href="#实体名和类名" class="headerlink" title="实体名和类名"></a>实体名和类名</h2><p>注意，实体名和类名(NSManagedObject的子类)是不同的。数据模型中的实体结构不需要匹配类层次结构。官方推荐的类名带个MO后缀。</p>
+<h6 id="性能问题"><a href="#性能问题" class="headerlink" title="性能问题"></a>性能问题</h6><p>在使用SQLite持久存储时，要小心实体继承。从另一个实体继承的所有实体都存在于SQLite中的同一个表中。SQLite持久存储设计中的这个因素可能会造成性能问题。</p>
+<p>#2. CoreData栈</p>
+<h3 id="1-NSPersistentContainer（持久化容器）"><a href="#1-NSPersistentContainer（持久化容器）" class="headerlink" title="1.NSPersistentContainer（持久化容器）"></a>1.NSPersistentContainer（持久化容器）</h3><p>从iOS 10和macOS 10.12开始，<code>NSPersistentContainer</code>处理核心数据栈的创建，并提供对<code>NSManagedObjectContext</code>的访问，以及许多方便的方法。在iOS 10和macOS 10.12之前，核心数据栈的创建更加复杂。</p>
+<h3 id="2-NSManagedObjectModel（受托管的模型对象）"><a href="#2-NSManagedObjectModel（受托管的模型对象）" class="headerlink" title="2.NSManagedObjectModel（受托管的模型对象）"></a>2.NSManagedObjectModel（受托管的模型对象）</h3><p><code>NSManagedObjectModel</code>实例描述核心数据栈将要访问的数据。在创建<code>Core Data 堆栈</code>期间，<code>NSManagedObjectModel</code>作为创建堆栈的第一步加载到内存中。初始化<code>NSManagedObjectModel</code>对象之后，构造<code>NSPersistentStoreCoordinator</code>对象。</p>
+<h3 id="3-NSPersistentStoreCoordinator（持久化存储协调器）"><a href="#3-NSPersistentStoreCoordinator（持久化存储协调器）" class="headerlink" title="3.NSPersistentStoreCoordinator（持久化存储协调器）"></a>3.NSPersistentStoreCoordinator（持久化存储协调器）</h3><ul>
+<li><code>NSPersistentStoreCoordinator</code>位于<code>Core Data 堆栈</code>的中间，负责实现在模型中定义的实体的实例。它在模型中创建实体的新实例，并从持久存储<code>(NSPersistentStore)</code>检索现有实例。持久性存储可以在磁盘上或内存中。根据应用程序的结构，可以由<code>NSPersistentStoreCoordinator</code>协调多个持久性存储，尽管这种情况并不常见。</li>
+<li><code>NSManagedObjectModel</code>定义数据的结构，而<code>NSPersistentStoreCoordinator</code>从持久存储中的数据实现对象，并将这些对象传递给请求者<code>NSManagedObjectContext</code>。<code>NSPersistentStoreCoordinator</code>还验证数据状态是否与<code>NSManagedObjectModel</code>中定义匹配的一致。</li>
+<li>将<code>NSPersistentStore</code>添加到<code>NSPersistentStoreCoordinator</code>的调用是异步执行的。有几种情况会导致此调用阻塞调用线程(例如，与iCloud的集成和迁移)。因此，最好异步执行此调用，以避免阻塞用户界面队列。</li>
+</ul>
+<h3 id="4-NSManagedObjectContext（受托管对象上下文）"><a href="#4-NSManagedObjectContext（受托管对象上下文）" class="headerlink" title="4.NSManagedObjectContext（受托管对象上下文）"></a>4.NSManagedObjectContext（受托管对象上下文）</h3><ul>
+<li><p>托管对象上下文<code>(NSManagedObjectContext)</code>是应用程序将与之交互最多的对象，因此它是应用程序其余部分公开的对象。可以将它看作是智能的草稿本。当您从持久存储中获取对象时，您将临时副本带到临时存储区，在那里它们形成一个对象图(或对象图的集合)。然后可以根据自己的喜好修改这些对象。但是，除非您实际保存这些更改，否则持久性存储将保持不变。</p>
+</li>
+<li><p>所有托管对象都必须在上下文中注册。您可以使用上下文将对象添加到对象图中，并从对象图中删除对象。上下文跟踪您对单个对象的属性和对象之间的关系所做的更改。通过跟踪更改，上下文能够为您提供撤销和重做支持。它还确保如果您更改了对象之间的关系，则可以维护对象图的完整性。</p>
+</li>
+<li><p>如果选择保存所做的更改，上下文将确保对象处于有效状态。如果是，则将更改写入持久性存储(或多个存储)，为创建的对象添加新记录，并为删除的对象删除记录。</p>
+</li>
+<li><p>没有<code>CoreData</code>，您必须编写方法来支持数据的归档和非归档，跟踪模型对象，并与undo manager交互以支持undo。在<code>CoreData</code>框架中，大部分功能是自动提供的，主要是通过托管对象上下文提供的。</p>
+</li>
+</ul>
+<h1 id="3-创建并保存受托管的对象"><a href="#3-创建并保存受托管的对象" class="headerlink" title="3. 创建并保存受托管的对象"></a>3. 创建并保存受托管的对象</h1><p><code>NSManagedObject</code>实例实现核心数据模型对象所需的基本行为。<code>NSManagedObject</code>实例需要两个元素:实体描述(NSEntityDescription实例)和托管对象上下文(NSManagedObjectContext实例)。实体描述包括对象所表示的实体的名称及其属性和关系。托管对象上下文表示在其中创建托管对象的草稿。上下文跟踪对象的更改和对象之间的关系。</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>Git配置多个SSH-Key</title>
+    <url>/2016/08/26/Git%E9%85%8D%E7%BD%AE%E5%A4%9A%E4%B8%AASSH-Key/</url>
+    <content><![CDATA[<p>ssh是一种网络协议，常用于计算机之间的加密登录。原理可以看阮一峰这篇文章：</p>
+<blockquote>
+<p><a href="http://www.ruanyifeng.com/blog/2011/12/ssh_remote_login.html" target="_blank" rel="noopener">SSH原理与运用</a></p>
+</blockquote>
+<p>日常开发过程中，可能出现这种情况：Github、Gitlab、Coding、OSChina等不同平台都需要配置ssh key.</p>
+<h3 id="生成ssh-key的步骤"><a href="#生成ssh-key的步骤" class="headerlink" title="生成ssh key的步骤"></a>生成ssh key的步骤</h3><hr>
+<p>这里以GitHub为例.</p>
+<h4 id="1-配置git用户名和密码"><a href="#1-配置git用户名和密码" class="headerlink" title="1.配置git用户名和密码"></a>1.配置git用户名和密码</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git config user.name &quot;username&quot;</span><br><span class="line">git config user.email &quot;email&quot;</span><br></pre></td></tr></table></figure>
+<p>需要全局设置的话，在config后加上–global即可</p>
+<h4 id="2-生成ssh-key"><a href="#2-生成ssh-key" class="headerlink" title="2.生成ssh key"></a>2.生成ssh key</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -C &quot;email&quot;</span><br></pre></td></tr></table></figure>
+<p>然后根据提示连续回车即可生成<code>id_rsa</code>和<code>id_rsa.pub</code>俩个文件, 文件路径为<code>~/.ssh</code>.</p>
+<h4 id="3-上传key到GitHub"><a href="#3-上传key到GitHub" class="headerlink" title="3.上传key到GitHub"></a>3.上传key到GitHub</h4><p>打开文件<code>id_rsa.pu</code>复制或者用以下命令：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">clip &lt; ~&#x2F;.ssh&#x2F;id_rsa.pub</span><br></pre></td></tr></table></figure>
+<p>然后按照操作在GitHub上添加自己的SSH key即可。</p>
+<h4 id="4-测试是否配置成功"><a href="#4-测试是否配置成功" class="headerlink" title="4.测试是否配置成功"></a>4.测试是否配置成功</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
+<p>若配置成功，会提示： </p>
+<blockquote>
+<p>Hi XXX! You’ve successfully authenticated, but GitHub does not provide shell access. </p>
+</blockquote>
+<h3 id="配置多个ssh-key"><a href="#配置多个ssh-key" class="headerlink" title="配置多个ssh key"></a>配置多个ssh key</h3><hr>
+<blockquote>
+<p>配置多个ssh key关键点在于设置不同的文件名 </p>
+</blockquote>
+<p>以github为例，设定文件名为<code>id_rsa.github</code></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -f ~&#x2F;.ssh&#x2F;id_rsa.github -C &quot;email&quot;</span><br></pre></td></tr></table></figure>
+<p>这时，<code>~/.ssh</code>目录下会生成俩个文件：<code>id_rsa.github</code>、<code>id_rsa.github.pub</code>.</p>
+<h4 id="如果出现以下错误："><a href="#如果出现以下错误：" class="headerlink" title="如果出现以下错误："></a>如果出现以下错误：</h4><blockquote>
+<p>Error: <a href="mailto:git@github.com">git@github.com</a>: Permission denied (publickey).<br>原因：key没加入到ssh库里</p>
+</blockquote>
+<p>1.查看已经添加的key</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ssh-add -l</span><br></pre></td></tr></table></figure>
+<p>若为空，则会显示 The agent has no identities.</p>
+<p>2.添加key</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ssh-add ~&#x2F;.ssh&#x2F;id_rsa.github</span><br></pre></td></tr></table></figure>
+<p>添加成功，则会显示<br>Identity added: /Users/law/.ssh/id_rsa.github (/Users/law/.ssh/id_rsa.github).</p>
+<blockquote>
+<p>以上，即完成了一台电脑上多个ssh key的配置.</p>
+</blockquote>
+]]></content>
+      <tags>
+        <tag>ssh</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>CALayer</title>
     <url>/2016/08/15/CALayer/</url>
     <content><![CDATA[<h2 id="锚点"><a href="#锚点" class="headerlink" title="锚点"></a>锚点</h2><p><code>anchorPoint</code> 它决定着<code>CALayer</code>身上的哪个点会在<code>position</code>所指定的位置上</p>
@@ -108,32 +271,34 @@
       </tags>
   </entry>
   <entry>
-    <title>CoreData</title>
-    <url>/2019/02/01/CoreData/</url>
-    <content><![CDATA[<h1 id="1-创建托管对象模型"><a href="#1-创建托管对象模型" class="headerlink" title="1. 创建托管对象模型"></a>1. 创建托管对象模型</h1><p>CoreData的很多功能都依赖于你创建的实体类的描述、属性、关系的模式。CoreData使用一个名为托管对象模型的模式——<code>NSManagedObjectModel</code>的实例。一般来说，模型越丰富，CoreData支持你编写的应用程序的能力就越强。</p>
-<p>托管对象模型允许CoreData从持久存储中的记录映射到应用程序中使用的托管对象。模型是实体描述对象(<code>NSEntityDescription</code>的实例)的集合。实体描述根据实体的名称、用于表示应用程序中的实体的类的名称以及它具有哪些属性(属性和关系)来描述实体(可以将其视为数据库中的表)。</p>
-<h2 id="创建实体和实体的属性"><a href="#创建实体和实体的属性" class="headerlink" title="创建实体和实体的属性"></a>创建实体和实体的属性</h2><p>在Xcode中启动新项目并打开模板选择对话框时，选择Use Core Data。CoreData模型的源文件会作为模板的一部分创建，该源文件的扩展名为<code>.xcdatamodeld</code>。在导航区域中选择该文件以显示CoreData模型编辑器。</p>
-<h2 id="实体名和类名"><a href="#实体名和类名" class="headerlink" title="实体名和类名"></a>实体名和类名</h2><p>注意，实体名和类名(NSManagedObject的子类)是不同的。数据模型中的实体结构不需要匹配类层次结构。官方推荐的类名带个MO后缀。</p>
-<h6 id="性能问题"><a href="#性能问题" class="headerlink" title="性能问题"></a>性能问题</h6><p>在使用SQLite持久存储时，要小心实体继承。从另一个实体继承的所有实体都存在于SQLite中的同一个表中。SQLite持久存储设计中的这个因素可能会造成性能问题。</p>
-<p>#2. CoreData栈</p>
-<h3 id="1-NSPersistentContainer（持久化容器）"><a href="#1-NSPersistentContainer（持久化容器）" class="headerlink" title="1.NSPersistentContainer（持久化容器）"></a>1.NSPersistentContainer（持久化容器）</h3><p>从iOS 10和macOS 10.12开始，<code>NSPersistentContainer</code>处理核心数据栈的创建，并提供对<code>NSManagedObjectContext</code>的访问，以及许多方便的方法。在iOS 10和macOS 10.12之前，核心数据栈的创建更加复杂。</p>
-<h3 id="2-NSManagedObjectModel（受托管的模型对象）"><a href="#2-NSManagedObjectModel（受托管的模型对象）" class="headerlink" title="2.NSManagedObjectModel（受托管的模型对象）"></a>2.NSManagedObjectModel（受托管的模型对象）</h3><p><code>NSManagedObjectModel</code>实例描述核心数据栈将要访问的数据。在创建<code>Core Data 堆栈</code>期间，<code>NSManagedObjectModel</code>作为创建堆栈的第一步加载到内存中。初始化<code>NSManagedObjectModel</code>对象之后，构造<code>NSPersistentStoreCoordinator</code>对象。</p>
-<h3 id="3-NSPersistentStoreCoordinator（持久化存储协调器）"><a href="#3-NSPersistentStoreCoordinator（持久化存储协调器）" class="headerlink" title="3.NSPersistentStoreCoordinator（持久化存储协调器）"></a>3.NSPersistentStoreCoordinator（持久化存储协调器）</h3><ul>
-<li><code>NSPersistentStoreCoordinator</code>位于<code>Core Data 堆栈</code>的中间，负责实现在模型中定义的实体的实例。它在模型中创建实体的新实例，并从持久存储<code>(NSPersistentStore)</code>检索现有实例。持久性存储可以在磁盘上或内存中。根据应用程序的结构，可以由<code>NSPersistentStoreCoordinator</code>协调多个持久性存储，尽管这种情况并不常见。</li>
-<li><code>NSManagedObjectModel</code>定义数据的结构，而<code>NSPersistentStoreCoordinator</code>从持久存储中的数据实现对象，并将这些对象传递给请求者<code>NSManagedObjectContext</code>。<code>NSPersistentStoreCoordinator</code>还验证数据状态是否与<code>NSManagedObjectModel</code>中定义匹配的一致。</li>
-<li>将<code>NSPersistentStore</code>添加到<code>NSPersistentStoreCoordinator</code>的调用是异步执行的。有几种情况会导致此调用阻塞调用线程(例如，与iCloud的集成和迁移)。因此，最好异步执行此调用，以避免阻塞用户界面队列。</li>
-</ul>
-<h3 id="4-NSManagedObjectContext（受托管对象上下文）"><a href="#4-NSManagedObjectContext（受托管对象上下文）" class="headerlink" title="4.NSManagedObjectContext（受托管对象上下文）"></a>4.NSManagedObjectContext（受托管对象上下文）</h3><ul>
-<li><p>托管对象上下文<code>(NSManagedObjectContext)</code>是应用程序将与之交互最多的对象，因此它是应用程序其余部分公开的对象。可以将它看作是智能的草稿本。当您从持久存储中获取对象时，您将临时副本带到临时存储区，在那里它们形成一个对象图(或对象图的集合)。然后可以根据自己的喜好修改这些对象。但是，除非您实际保存这些更改，否则持久性存储将保持不变。</p>
-</li>
-<li><p>所有托管对象都必须在上下文中注册。您可以使用上下文将对象添加到对象图中，并从对象图中删除对象。上下文跟踪您对单个对象的属性和对象之间的关系所做的更改。通过跟踪更改，上下文能够为您提供撤销和重做支持。它还确保如果您更改了对象之间的关系，则可以维护对象图的完整性。</p>
-</li>
-<li><p>如果选择保存所做的更改，上下文将确保对象处于有效状态。如果是，则将更改写入持久性存储(或多个存储)，为创建的对象添加新记录，并为删除的对象删除记录。</p>
-</li>
-<li><p>没有<code>CoreData</code>，您必须编写方法来支持数据的归档和非归档，跟踪模型对象，并与undo manager交互以支持undo。在<code>CoreData</code>框架中，大部分功能是自动提供的，主要是通过托管对象上下文提供的。</p>
-</li>
-</ul>
-<h1 id="3-创建并保存受托管的对象"><a href="#3-创建并保存受托管的对象" class="headerlink" title="3. 创建并保存受托管的对象"></a>3. 创建并保存受托管的对象</h1><p><code>NSManagedObject</code>实例实现核心数据模型对象所需的基本行为。<code>NSManagedObject</code>实例需要两个元素:实体描述(NSEntityDescription实例)和托管对象上下文(NSManagedObjectContext实例)。实体描述包括对象所表示的实体的名称及其属性和关系。托管对象上下文表示在其中创建托管对象的草稿。上下文跟踪对象的更改和对象之间的关系。</p>
+    <title>JavaScript中 == 运算符</title>
+    <url>/2018/01/08/JavaScript%E4%B8%AD-%E8%BF%90%E7%AE%97%E7%AC%A6/</url>
+    <content><![CDATA[<h2 id="规则"><a href="#规则" class="headerlink" title="规则"></a>规则</h2><p>在转换不同的数据类型时，相等和不相等操作符遵循下列基本规则：</p>
+<ol>
+<li>如果有一个操作数是布尔值，则在比较相等性之前先将其转换为数值——false转换为0，而true转换为1；</li>
+<li>如果一个操作数是字符串，另一个操作数是数值，在比较相等性之前先将字符串转换为数值；</li>
+<li>如果一个操作数是对象，另一个操作数不是，则调用对象的valueOf()方法，用得到的基本类型值按照前面的规则进行比较；</li>
+</ol>
+<h2 id="Number-函数的转换规则如下"><a href="#Number-函数的转换规则如下" class="headerlink" title="Number()函数的转换规则如下"></a>Number()函数的转换规则如下</h2><ol>
+<li>如果是Boolean值，true和false将分别被转换为1和0。</li>
+<li>如果是数字值，只是简单的传入和返回。</li>
+<li>如果是null值，返回0。</li>
+<li>如果是undefined，返回NaN。</li>
+<li>如果是字符串，遵循下列规则： </li>
+<li>1 如果字符串中只包含数字（包括前面带加号或负号的情况），则将其转换为十进制数值， 即”1”会变成1，”123”会变成123，而”011”会变成11（注意：前导的零被忽略了）；</li>
+<li>2 如果字符串中包含有效的浮点格式，如”1.1”，则将其转换为对应的浮点数值（同样，也会忽略前导零）；</li>
+<li>3 如果字符串中包含有效的十六进制格式，例如”0xf”，则将其转换为相同大小的十进制整数值；</li>
+<li>4 如果字符串是空的（不包含任何字符），则将其转换为0；</li>
+<li>5 如果字符串中包含除上述格式之外的字符，则将其转换为NaN。</li>
+</ol>
+<h2 id="例子-“true”-true"><a href="#例子-“true”-true" class="headerlink" title="例子 “true” == true"></a>例子 “true” == true</h2><ol>
+<li>“true” == true 符合上面的规则1，所以可以转化为 “true” == 1</li>
+<li>“true” == 1 符合规则2，也就是说需要将 “true”转换为数值后再比较，把 “true” 转换成数值是使用 Number 函数，按照规则 5 和规则 5.5，Number(‘true’) 的值为 NaN，也就是说现在的问题变成了对 NaN == 1 进行求值</li>
+</ol>
+<blockquote>
+<p>NaN与任何值都不相等，包括NaN本身。</p>
+</blockquote>
+<p>所以 结果为false.</p>
 ]]></content>
   </entry>
   <entry>
@@ -232,83 +397,6 @@ http://www.joes-hardware.com/specials/saw-blade.gif</code></p>
       <tags>
         <tag>HTTP</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>Git配置多个SSH-Key</title>
-    <url>/2016/08/26/Git%E9%85%8D%E7%BD%AE%E5%A4%9A%E4%B8%AASSH-Key/</url>
-    <content><![CDATA[<p>ssh是一种网络协议，常用于计算机之间的加密登录。原理可以看阮一峰这篇文章：</p>
-<blockquote>
-<p><a href="http://www.ruanyifeng.com/blog/2011/12/ssh_remote_login.html" target="_blank" rel="noopener">SSH原理与运用</a></p>
-</blockquote>
-<p>日常开发过程中，可能出现这种情况：Github、Gitlab、Coding、OSChina等不同平台都需要配置ssh key.</p>
-<h3 id="生成ssh-key的步骤"><a href="#生成ssh-key的步骤" class="headerlink" title="生成ssh key的步骤"></a>生成ssh key的步骤</h3><hr>
-<p>这里以GitHub为例.</p>
-<h4 id="1-配置git用户名和密码"><a href="#1-配置git用户名和密码" class="headerlink" title="1.配置git用户名和密码"></a>1.配置git用户名和密码</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git config user.name &quot;username&quot;</span><br><span class="line">git config user.email &quot;email&quot;</span><br></pre></td></tr></table></figure>
-<p>需要全局设置的话，在config后加上–global即可</p>
-<h4 id="2-生成ssh-key"><a href="#2-生成ssh-key" class="headerlink" title="2.生成ssh key"></a>2.生成ssh key</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -C &quot;email&quot;</span><br></pre></td></tr></table></figure>
-<p>然后根据提示连续回车即可生成<code>id_rsa</code>和<code>id_rsa.pub</code>俩个文件, 文件路径为<code>~/.ssh</code>.</p>
-<h4 id="3-上传key到GitHub"><a href="#3-上传key到GitHub" class="headerlink" title="3.上传key到GitHub"></a>3.上传key到GitHub</h4><p>打开文件<code>id_rsa.pu</code>复制或者用以下命令：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">clip &lt; ~&#x2F;.ssh&#x2F;id_rsa.pub</span><br></pre></td></tr></table></figure>
-<p>然后按照操作在GitHub上添加自己的SSH key即可。</p>
-<h4 id="4-测试是否配置成功"><a href="#4-测试是否配置成功" class="headerlink" title="4.测试是否配置成功"></a>4.测试是否配置成功</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
-<p>若配置成功，会提示： </p>
-<blockquote>
-<p>Hi XXX! You’ve successfully authenticated, but GitHub does not provide shell access. </p>
-</blockquote>
-<h3 id="配置多个ssh-key"><a href="#配置多个ssh-key" class="headerlink" title="配置多个ssh key"></a>配置多个ssh key</h3><hr>
-<blockquote>
-<p>配置多个ssh key关键点在于设置不同的文件名 </p>
-</blockquote>
-<p>以github为例，设定文件名为<code>id_rsa.github</code></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -f ~&#x2F;.ssh&#x2F;id_rsa.github -C &quot;email&quot;</span><br></pre></td></tr></table></figure>
-<p>这时，<code>~/.ssh</code>目录下会生成俩个文件：<code>id_rsa.github</code>、<code>id_rsa.github.pub</code>.</p>
-<h4 id="如果出现以下错误："><a href="#如果出现以下错误：" class="headerlink" title="如果出现以下错误："></a>如果出现以下错误：</h4><blockquote>
-<p>Error: <a href="mailto:git@github.com">git@github.com</a>: Permission denied (publickey).<br>原因：key没加入到ssh库里</p>
-</blockquote>
-<p>1.查看已经添加的key</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ssh-add -l</span><br></pre></td></tr></table></figure>
-<p>若为空，则会显示 The agent has no identities.</p>
-<p>2.添加key</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ssh-add ~&#x2F;.ssh&#x2F;id_rsa.github</span><br></pre></td></tr></table></figure>
-<p>添加成功，则会显示<br>Identity added: /Users/law/.ssh/id_rsa.github (/Users/law/.ssh/id_rsa.github).</p>
-<blockquote>
-<p>以上，即完成了一台电脑上多个ssh key的配置.</p>
-</blockquote>
-]]></content>
-      <tags>
-        <tag>ssh</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>JavaScript中 == 运算符</title>
-    <url>/2018/01/08/JavaScript%E4%B8%AD-%E8%BF%90%E7%AE%97%E7%AC%A6/</url>
-    <content><![CDATA[<h2 id="规则"><a href="#规则" class="headerlink" title="规则"></a>规则</h2><p>在转换不同的数据类型时，相等和不相等操作符遵循下列基本规则：</p>
-<ol>
-<li>如果有一个操作数是布尔值，则在比较相等性之前先将其转换为数值——false转换为0，而true转换为1；</li>
-<li>如果一个操作数是字符串，另一个操作数是数值，在比较相等性之前先将字符串转换为数值；</li>
-<li>如果一个操作数是对象，另一个操作数不是，则调用对象的valueOf()方法，用得到的基本类型值按照前面的规则进行比较；</li>
-</ol>
-<h2 id="Number-函数的转换规则如下"><a href="#Number-函数的转换规则如下" class="headerlink" title="Number()函数的转换规则如下"></a>Number()函数的转换规则如下</h2><ol>
-<li>如果是Boolean值，true和false将分别被转换为1和0。</li>
-<li>如果是数字值，只是简单的传入和返回。</li>
-<li>如果是null值，返回0。</li>
-<li>如果是undefined，返回NaN。</li>
-<li>如果是字符串，遵循下列规则： </li>
-<li>1 如果字符串中只包含数字（包括前面带加号或负号的情况），则将其转换为十进制数值， 即”1”会变成1，”123”会变成123，而”011”会变成11（注意：前导的零被忽略了）；</li>
-<li>2 如果字符串中包含有效的浮点格式，如”1.1”，则将其转换为对应的浮点数值（同样，也会忽略前导零）；</li>
-<li>3 如果字符串中包含有效的十六进制格式，例如”0xf”，则将其转换为相同大小的十进制整数值；</li>
-<li>4 如果字符串是空的（不包含任何字符），则将其转换为0；</li>
-<li>5 如果字符串中包含除上述格式之外的字符，则将其转换为NaN。</li>
-</ol>
-<h2 id="例子-“true”-true"><a href="#例子-“true”-true" class="headerlink" title="例子 “true” == true"></a>例子 “true” == true</h2><ol>
-<li>“true” == true 符合上面的规则1，所以可以转化为 “true” == 1</li>
-<li>“true” == 1 符合规则2，也就是说需要将 “true”转换为数值后再比较，把 “true” 转换成数值是使用 Number 函数，按照规则 5 和规则 5.5，Number(‘true’) 的值为 NaN，也就是说现在的问题变成了对 NaN == 1 进行求值</li>
-</ol>
-<blockquote>
-<p>NaN与任何值都不相等，包括NaN本身。</p>
-</blockquote>
-<p>所以 结果为false.</p>
-]]></content>
   </entry>
   <entry>
     <title>LeetCode-俩数相加</title>
@@ -530,134 +618,6 @@ http://www.joes-hardware.com/specials/saw-blade.gif</code></p>
       </tags>
   </entry>
   <entry>
-    <title>iOS集成Sentry捕获异常</title>
-    <url>/2020/02/27/iOS%E9%9B%86%E6%88%90Sentry%E6%8D%95%E8%8E%B7%E5%BC%82%E5%B8%B8/</url>
-    <content><![CDATA[<p><img src="https://i.loli.net/2020/07/27/1C6pm3SeZl5iJEu.png" alt="sentry官网.png"></p>
-<p>iOS端异常捕获常用工具有很多，国内有腾讯的Bugly，国外有Sentry，我们选择了Sentry，因为Sentry是开源的，支持搭建在自己的服务器上（self-hosted）。Sentry提供了三种类型的账号：Developer、Team、Business，Developer是免费的，但功能有限且异常记录最多每个月5k条，推荐自己搭建服务器，这样就不会有记录数量限制了，Sentry官方文档有详细的self-hosted教程，这里不再赘述。</p>
-<a id="more"></a>
-
-<p><a href="https://sentry.io/" target="_blank" rel="noopener">Sentry官网</a>注册完帐后之后会让你选择一个平台，这里我们可以选择Objective-C或Swift：</p>
-<p><img src="https://i.loli.net/2020/07/27/qgKEFRhVdjU4t3S.png" alt="sentry选择@2x.png"></p>
-<p>然后找到项目设置选择Client Keys(DSN)，复制DSN后面代码中需要用到（如果是self-hosted则是Public DSN）；</p>
-<h4 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h4><p>1、使用CocoaPods导入Sentry；<br>2、在AppDelegate的didFinishLaunchingWithOptions:方法中启动Sentry；</p>
-<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line">- (void)startSentry &#123;</span><br><span class="line">    <span class="type">NSError</span> *error = <span class="literal">nil</span>;</span><br><span class="line">    <span class="comment">// 根据DSN创建SentryClient</span></span><br><span class="line">    <span class="type">SentryClient</span> *client = [[<span class="type">SentryClient</span> alloc] initWithDsn:kSentryDSN didFailWithError:&amp;error];</span><br><span class="line">    <span class="type">SentryClient</span>.sharedClient = client;</span><br><span class="line">    [<span class="type">SentryClient</span>.sharedClient startCrashHandlerWithError:&amp;error];</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (<span class="literal">nil</span> != error) &#123;</span><br><span class="line">        <span class="type">NSLog</span>(@<span class="string">"%@"</span>, error);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>Sentry提供了一系列属性，供我们自定义一些信息；</p>
-<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="type">SentryClient</span>.sharedClient.environment = environment; <span class="comment">// 环境 例如：debug</span></span><br><span class="line">[<span class="type">SentryClient</span>.sharedClient enableAutomaticBreadcrumbTracking]; <span class="comment">// 开启面包屑功能</span></span><br><span class="line"><span class="type">SentryClient</span>.sharedClient.maxBreadcrumbs = <span class="number">30</span>; <span class="comment">// 面包屑最多栈数</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 用户信息</span></span><br><span class="line"><span class="type">SentryUser</span> *user = [[<span class="type">SentryUser</span> alloc] initWithUserId:guid]; <span class="comment">// 日志记录以此区别、归类不同用户</span></span><br><span class="line">user.username = userName;</span><br><span class="line">user.extra = @&#123;@<span class="string">"cellphone"</span>:cellphone&#125;; <span class="comment">// 自定义字段用户信息</span></span><br><span class="line"><span class="type">SentryClient</span>.sharedClient.user = user;</span><br><span class="line"></span><br><span class="line"><span class="type">SentryClient</span>.sharedClient.extra = @&#123;@<span class="string">"other"</span>:otherMsg&#125;; <span class="comment">// 自定义字段信息</span></span><br></pre></td></tr></table></figure>
-
-<p>Sentry也支持自定义异常事件并抛出</p>
-<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="type">SentryEvent</span> *event = [[<span class="type">SentryEvent</span> alloc] initWithLevel:kSentrySeverityWarning]; <span class="comment">// 指定事件的严重级别 Fatal/Error/Warnig</span></span><br><span class="line">event.message = message; <span class="comment">// 错误信息</span></span><br><span class="line">event.environment = environment;</span><br><span class="line">event.extra =@&#123;@<span class="string">"url"</span>:url,@<span class="string">"code"</span>:@(code),@<span class="string">"param"</span>:param&#125;; <span class="comment">// 自定义字段</span></span><br><span class="line">[<span class="type">SentryClient</span>.sharedClient sendEvent:event withCompletionHandler:^(<span class="type">NSError</span> * _Nullable error) &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="literal">nil</span> != error) &#123;</span><br><span class="line">        <span class="type">NSLog</span>(@<span class="string">"%@"</span>, error);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;];</span><br></pre></td></tr></table></figure>
-<p>至此，iOS端的编码工作已经完成，但是还有重要的一步操作没有做</p>
-<h4 id="上传dSYM文件"><a href="#上传dSYM文件" class="headerlink" title="上传dSYM文件"></a>上传dSYM文件</h4><p>sentry平台创建Token：User Setting —-&gt; Auth Tokens —&gt; Create New Token；创建时按需勾选选项；<br>拿到Token后就可以上传文件了，这里有2种上传方式：</p>
-<ul>
-<li><p>shell脚本上传</p>
-<ol>
-<li>打包后拿到dSYM文件；</li>
-<li>安装sentry-cli：<code>brew install getsentry/tools/sentry-cli</code></li>
-<li>运行脚本：<code>sentry-cli --url URL --auth-token YOUR_TOKEN upload-dif --org YOUR_ORG --project  YOUR_PROJECT   dSYM_PATH --log-level=debug</code>（其中URL如果是sentry服务器则是<a href="https://sentry.io，" target="_blank" rel="noopener">https://sentry.io，</a> 如果是self-hosted则填写自己服务器url）</li>
-</ol>
-</li>
-<li><p>fastlane上传（待补充）</p>
-</li>
-</ul>
-<p>dSYM文件上传成功后，Sentry项目设置中Debug Files就能看到文件了，之后再次捕获crash异常，查看堆栈信息就已经能解析出具体的方法了。</p>
-]]></content>
-      <categories>
-        <category>iOS</category>
-      </categories>
-      <tags>
-        <tag>Tools</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Cocoa 集合类型：NSPointerArray，NSMapTable，NSHashTable</title>
-    <url>/2017/08/24/Cocoa%E9%9B%86%E5%90%88%E7%B1%BB%E5%9E%8B%EF%BC%9ANSPointerArra%E3%80%81NSMapTable%E3%80%81NSHashTable/</url>
-    <content><![CDATA[<!-- toc -->
-
-<p>在iOS6之后新增了NSPointerArray，NSMapTable，NSHashTable三种集合，分别拓展了NSArray、NSDictionary、NSSet的功能。</p>
-<a id="more"></a> 
-
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F; NSPointerArray，NSMapTable，NSHashTable</span><br><span class="line">API_AVAILABLE(macos(10.5), ios(6.0), watchos(2.0), tvos(9.0))</span><br></pre></td></tr></table></figure>
-
-<p>传统集合类型的短板：</p>
-<ul>
-<li>只能强引用放入集合中的对象</li>
-<li>如果想要弱引用，只能通过NSValue包装</li>
-<li>不能放入nil</li>
-</ul>
-<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">/// NSValue的这个方法可以保持对对象的弱引用</span></span><br><span class="line">+ (<span class="type">NSValue</span> *)valueWithNonretainedObject:(nullable id)anObject;</span><br></pre></td></tr></table></figure>
-
-<p>而新增的这三种集合，解决了以上问题，他们都使用了NSPointerFunctionsOptions和NSPointerFunctions来决定内存管理等方式，先来看下它们：</p>
-<p><strong>NSPointerFunctionsOptions</strong><br>它是CF_OPTIONS类型的，用法与CF_ENUM类似，一共分为三类：</p>
-<ul>
-<li>内存管理方式</li>
-<li>对象判等方式</li>
-<li>内存标识方式</li>
-</ul>
-<p>例如：需要弱引用成员、使用对象方式对比、并且 add 时 copy 对象，则可以这么写：</p>
-<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="type">NSPointerFunctionsOptions</span> *options = <span class="type">NSPointerFunctionsWeakMemory</span> | <span class="type">NSPointerFunctionsObjectPersonality</span> | <span class="type">NSPointerFunctionsCopyIn</span>;</span><br></pre></td></tr></table></figure>
-
-<p>具体类型在此不再赘述</p>
-<p><strong>NSPointerFunctions</strong><br>是自定义成员的处理方式，如内存管理、对象判等，他们都是函数指针，用法如下</p>
-<pre><code class="Swift"><span class="keyword">static</span> <span class="type">BOOL</span> <span class="type">IsEqual</span>(const void *item1, const void *item2, <span class="type">NSUInteger</span> (*size)(const void *item)) {
-    <span class="keyword">return</span> *(const int *)item1 == *(const int *)item2;
-}
-
-<span class="type">NSPointerFunctions</span> *functions = [[<span class="type">NSPointerFunctions</span> alloc] <span class="keyword">init</span>];
-[functions setIsEqualFunction:<span class="type">IsEqual</span>];</code></pre>
-<h2 id="1-NSPointerArray"><a href="#1-NSPointerArray" class="headerlink" title="1.NSPointerArray"></a>1.NSPointerArray</h2><p><strong>特点：</strong></p>
-<ul>
-<li>与 NSArray 不同，它可以存储 NULL，并且 NULL 还参与 count 的计算</li>
-<li>count 可以 set，如果直接 set count，那么会使用 NULL 占位</li>
-<li>可以使用 weak 来修饰成员</li>
-<li>成员可以是所有指针类型 </li>
-</ul>
-<p><strong>初始化方法：</strong></p>
-<pre><code class="Swift">- (instancetype)initWithOptions:(<span class="type">NSPointerFunctionsOptions</span>)options;
-- (instancetype)initWithPointerFunctions:(<span class="type">NSPointerFunctions</span> *)functions; </code></pre>
-<p><strong>compact方法</strong><br>NSPointerArray可以添加NULL，同样API提供了compact方法用于剔除所有NULL<br>⚠️我们主动添加的NULL的时候，会被标记，之后调用compact的时候，所有NULL会被标记，但是我们直接set count或者成员已经被释放，此时并不会被标记，我们可以在调用compact之前手动给添加一个NULL来打上标记：</p>
-<pre><code class="Swift">[array addPointer:<span class="type">NULL</span>];
-[array compact];</code></pre>
-<h2 id="2-NSMapTable"><a href="#2-NSMapTable" class="headerlink" title="2.NSMapTable"></a>2.NSMapTable</h2><p><strong>特点：</strong></p>
-<ul>
-<li>key 可以不用遵循 NSCopying 协议</li>
-<li>key 和 value 的内存管理方式可以分开，如：key 是强引用，value 是弱引用</li>
-<li>当用 weak 修饰 key 或 value 时，有一方被释放，则该键值对移除</li>
-</ul>
-<h2 id="3-NSHashTable"><a href="#3-NSHashTable" class="headerlink" title="3.NSHashTable"></a>3.NSHashTable</h2><p><strong>特点：</strong>  </p>
-<ul>
-<li>与<strong>NSPointerArray</strong>一样可以根据NSPointerFunctionsOptions来决定对对象的内存管理方式</li>
-</ul>
-<p>最后来一个NSHashTable的demo验证一下</p>
-<pre><code class="Swift"><span class="comment">// demo </span>
-int main(int argc, const char * argv[]) {    
-    <span class="type">NSHashTable</span> *hashTable = [<span class="type">NSHashTable</span> hashTableWithOptions:<span class="type">NSPointerFunctionsWeakMemory</span>];
-    @autoreleasepool {
-        <span class="type">NSObject</span> *obj = [[<span class="type">NSObject</span> alloc] <span class="keyword">init</span>];
-        [hashTable addObject:obj];
-        <span class="type">NSLog</span>(@<span class="string">"before-----%@"</span>, hashTable);
-        <span class="type">NSLog</span>(@<span class="string">"before-----%ld"</span>, hashTable.<span class="built_in">count</span>);
-    }
-    <span class="type">NSLog</span>(@<span class="string">"after-----%@"</span>, hashTable);
-    <span class="type">NSLog</span>(@<span class="string">"after-----%ld"</span>, hashTable.<span class="built_in">count</span>);
-}   
-<span class="comment">// 结果</span>
-...before-----<span class="type">NSHashTable</span> {
-...[<span class="number">15</span>] &lt;<span class="type">NSObject</span>: <span class="number">0x10056a6d0</span>&gt;
-...}
-...before-----<span class="number">1</span>
-...after-----<span class="type">NSHashTable</span> {
-...} 
-...after-----<span class="number">1</span>  <span class="comment">//虽然obj被释放了，但是NULL仍然会被计数</span></code></pre>
-]]></content>
-      <categories>
-        <category>Objective-C</category>
-      </categories>
-      <tags>
-        <tag>集合</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Objective-C中的协议与分类</title>
     <url>/2016/08/15/Objective-C%E4%B8%AD%E7%9A%84%E5%8D%8F%E8%AE%AE%E4%B8%8E%E5%88%86%E7%B1%BB/</url>
     <content><![CDATA[<p>协议与分类</p>
@@ -741,141 +701,6 @@ int main(int argc, const char * argv[]) {
       <tags>
         <tag>oc_protocol</tag>
         <tag>oc_category</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>macOS Catalina 10.15 安装 CocoaPods 步骤</title>
-    <url>/2020/03/24/macOS-Catalina-10-15-%E5%AE%89%E8%A3%85-CocoaPods-%E6%AD%A5%E9%AA%A4/</url>
-    <content><![CDATA[<!-- toc -->
-
-<h5 id="1-检查电脑上的-CocoaPods-版本"><a href="#1-检查电脑上的-CocoaPods-版本" class="headerlink" title="1. 检查电脑上的 CocoaPods 版本"></a>1. 检查电脑上的 CocoaPods 版本</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">pod --version</span><br></pre></td></tr></table></figure>
-<p>输出：zsh: command not found: pod  好的 你果然没有安装CocoaPods</p>
-<a id="more"></a>
-
-<h5 id="2-看下ruby版本"><a href="#2-看下ruby版本" class="headerlink" title="2. 看下ruby版本"></a>2. 看下ruby版本</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ruby -v</span><br></pre></td></tr></table></figure>
-<p>输出：ruby 2.6.3p62 (2019-04-16 revision 67580) [universal.x86_64-darwin19]</p>
-<h5 id="3-查看当前安装的gem源"><a href="#3-查看当前安装的gem源" class="headerlink" title="3. 查看当前安装的gem源"></a>3. 查看当前安装的gem源</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">gem sources -l</span><br></pre></td></tr></table></figure>
-<p>输出：<br><strong>* CURRENT SOURCES *</strong><br><a href="https://rubygems.org/" target="_blank" rel="noopener">https://rubygems.org/</a></p>
-<h5 id="4-移除原有的源"><a href="#4-移除原有的源" class="headerlink" title="4. 移除原有的源"></a>4. 移除原有的源</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">gem sources --remove https:&#x2F;&#x2F;rubygems.org&#x2F;</span><br></pre></td></tr></table></figure>
-
-<p>输出：<a href="https://rubygems.org/" target="_blank" rel="noopener">https://rubygems.org/</a> removed from sources<br>移除成功</p>
-<h5 id="5-添加ruby-china的源"><a href="#5-添加ruby-china的源" class="headerlink" title="5. 添加ruby-china的源"></a>5. 添加ruby-china的源</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">gem sources -a https:&#x2F;&#x2F;gems.ruby-china.com&#x2F;</span><br></pre></td></tr></table></figure>
-<p>输出：<a href="https://gems.ruby-china.com/" target="_blank" rel="noopener">https://gems.ruby-china.com/</a> added to sources<br>添加成功</p>
-<h5 id="6-安装"><a href="#6-安装" class="headerlink" title="6. 安装"></a>6. 安装</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo gem install cocoapods</span><br></pre></td></tr></table></figure>
-
-<p>输出结果：… 32 gems installed.<br>安装完成</p>
-]]></content>
-      <categories>
-        <category>iOS</category>
-      </categories>
-      <tags>
-        <tag>CocoaPods</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Git常用指令</title>
-    <url>/2018/03/24/Git%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</url>
-    <content><![CDATA[<!-- TOC -->
-
-<h3 id="一、新建仓库"><a href="#一、新建仓库" class="headerlink" title="一、新建仓库"></a>一、新建仓库</h3><hr>
-<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"># 在当前目录新建一个<span class="type">Git</span>仓库</span><br><span class="line">$ git <span class="keyword">init</span></span><br><span class="line"></span><br><span class="line"># 新建一个目录，将其初始化为<span class="type">Git</span>仓库</span><br><span class="line">$ git <span class="keyword">init</span> [project-name]</span><br><span class="line"></span><br><span class="line"># 克隆一个项目</span><br><span class="line">git clone [url]</span><br></pre></td></tr></table></figure>
-
-<a id="more"></a>
-
-<h3 id="二、配置"><a href="#二、配置" class="headerlink" title="二、配置"></a>二、配置</h3><hr>
-<p>Git的设置文件为.gitconfig，它可以在用户主目录下（全局配置），也可以在项目目录下（项目配置）。</p>
-<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"># 显示当前的<span class="type">Git</span>配置</span><br><span class="line">$ git config --list</span><br><span class="line"></span><br><span class="line"># 编辑<span class="type">Git</span>配置文件</span><br><span class="line">$ git config -e [--global]</span><br><span class="line"></span><br><span class="line"># 设置提交代码时的用户信息</span><br><span class="line">$ git config [--global] user.name <span class="string">"[name]"</span></span><br><span class="line">$ git config [--global] user.email <span class="string">"[email address]"</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="三、增加-删除文件"><a href="#三、增加-删除文件" class="headerlink" title="三、增加/删除文件"></a>三、增加/删除文件</h3><hr>
-<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"># 添加指定文件到暂存区</span><br><span class="line">$ git add [file1] [file2] ...</span><br><span class="line"></span><br><span class="line"># 添加指定目录到暂存区（包括子目录）</span><br><span class="line">$ git add [dir]</span><br><span class="line"></span><br><span class="line"># 添加当前目录的所有文件到暂存区</span><br><span class="line">$ git add .</span><br><span class="line"></span><br><span class="line"># 添加每个变化前，都会要求确认</span><br><span class="line"># 对于同一个文件的多处变化，可以实现分次提交</span><br><span class="line">$ git add -p</span><br><span class="line"></span><br><span class="line"># 删除工作区文件，并且将这次删除放入暂存区</span><br><span class="line">$ git rm [file1] [file2] ...</span><br><span class="line"></span><br><span class="line"># 停止追踪指定文件，但该文件会保留在工作区</span><br><span class="line">$ git rm --cached [file]</span><br><span class="line"></span><br><span class="line"># 改名文件，并且将这个改名放入暂存区</span><br><span class="line">$ git mv [file-original] [file-renamed]</span><br></pre></td></tr></table></figure>
-
-<h3 id="四、代码提交"><a href="#四、代码提交" class="headerlink" title="四、代码提交"></a>四、代码提交</h3><hr>
-<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"># 提交暂存区到仓库区</span><br><span class="line">$ git commit -m [message]</span><br><span class="line"></span><br><span class="line"># 提交暂存区的指定文件到仓库区</span><br><span class="line">$ git commit [file1] [file2] ... -m [message]</span><br><span class="line"></span><br><span class="line"># 提交工作区自上次commit之后的变化，直接到仓库区</span><br><span class="line">$ git commit -a</span><br><span class="line"></span><br><span class="line"># 提交时显示所有的diff信息</span><br><span class="line">$ git commit -v</span><br><span class="line"></span><br><span class="line"># 使用一次新的commit，替代上一次提交</span><br><span class="line"># 如果代码没有任何新变化，则用来改写上一次commit的提交信息</span><br><span class="line">$ git commit --amend -m [message]</span><br><span class="line"></span><br><span class="line"># 重做上一次commit，并包括指定文件的新变化</span><br><span class="line">$ git commit --amend [file1] [file2] ...</span><br><span class="line">``` </span><br><span class="line"></span><br><span class="line">### 五、分支</span><br><span class="line">---</span><br><span class="line">```<span class="type">Swift</span></span><br><span class="line"># 查看本地分支列表</span><br><span class="line">$ git branch</span><br><span class="line"></span><br><span class="line"># 查看远程分支列表</span><br><span class="line">$ git branch -r</span><br><span class="line"></span><br><span class="line"># 创建一个新的feature-jx分支并跟踪origin的远程develop分支 (-b表示切换到新建分支)</span><br><span class="line">$ git checkout -b feature-jx origin/develop</span><br><span class="line"></span><br><span class="line"># 将本地的feature-jx分支推送到远程feature分支（远程分支不存在则会创建）</span><br><span class="line">$ git push origin feature-jx:feature</span><br><span class="line"></span><br><span class="line"># 本地分支追踪远程分支</span><br><span class="line">$ git branch --<span class="keyword">set</span>-upstream [branch] [remote-branch]</span><br><span class="line"></span><br><span class="line"># 合并指定分支到当前分支</span><br><span class="line">$ git merge [branch]</span><br><span class="line"></span><br><span class="line"># 选择一个commit，合并进当前分支</span><br><span class="line">$ git cherry-pick [commit]</span><br><span class="line"></span><br><span class="line"># 删除分支</span><br><span class="line">$ git branch -d [branch]</span><br><span class="line"></span><br><span class="line"># 删除远程分支</span><br><span class="line">$ git push origin --delete [branch]</span><br><span class="line">$ git branch -dr [remote/branch]</span><br><span class="line"></span><br><span class="line"># 新建一个分支，指向指定commit</span><br><span class="line">$ git branch [branch] [commit]</span><br><span class="line"></span><br><span class="line"># 新建一个分支，与指定的远程分支建立追踪关系</span><br><span class="line">$ git branch --track [branch] [remote-branch] </span><br><span class="line"></span><br><span class="line"># 同步远程仓库删除状态</span><br><span class="line">$ git remote prune origin</span><br></pre></td></tr></table></figure>
-
-<h3 id="六、标签"><a href="#六、标签" class="headerlink" title="六、标签"></a>六、标签</h3><hr>
-<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"># 列出所有tag </span><br><span class="line">$ git tag</span><br><span class="line"></span><br><span class="line"># 新建一个tag在当前的commit</span><br><span class="line">$ git tag [tag]</span><br><span class="line"></span><br><span class="line"># 新建一个tag在指定的commit </span><br><span class="line">$ git tag [tag] [commit]</span><br><span class="line"></span><br><span class="line"># 删除本地tag</span><br><span class="line">$ git tag -d [tag]</span><br><span class="line"></span><br><span class="line"># 删除远程tag(推一个空的到对应的tag)</span><br><span class="line">$ git push origin :refs/tags/[tagName]</span><br><span class="line"></span><br><span class="line"># 查看tag信息</span><br><span class="line">$ git show [tag]</span><br><span class="line"></span><br><span class="line"># 提交指定tag</span><br><span class="line">$ git push [remote] [tag]</span><br><span class="line"></span><br><span class="line"># 提交所有tag</span><br><span class="line">$ git push [remote] --tags</span><br><span class="line"></span><br><span class="line"># 新建一个分支，指向某个tag</span><br><span class="line">$ git checkout -b [brach] [tag]</span><br></pre></td></tr></table></figure>
-
-<h3 id="七、查看信息"><a href="#七、查看信息" class="headerlink" title="七、查看信息"></a>七、查看信息</h3><hr>
-<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"># 显示有变更的文件</span><br><span class="line">$ git status</span><br><span class="line"></span><br><span class="line"># 显示当前分支的版本历史</span><br><span class="line">$ git log</span><br><span class="line"></span><br><span class="line"># 显示commit历史，以及每次commit发生变更的文件</span><br><span class="line">$ git log --stat</span><br><span class="line"></span><br><span class="line"># 搜索提交历史，根据关键词</span><br><span class="line">$ git log -S [keyword]</span><br><span class="line"></span><br><span class="line"># 显示某个commit之后的所有变动，每个commit占据一行</span><br><span class="line">$ git log [tag] HEAD --pretty=format:%s</span><br><span class="line"></span><br><span class="line"># 显示某个commit之后的所有变动，其<span class="string">"提交说明"</span>必须符合搜索条件</span><br><span class="line">$ git log [tag] HEAD --grep feature</span><br><span class="line"></span><br><span class="line"># 显示某个文件的版本历史，包括文件改名</span><br><span class="line">$ git log --follow [file]</span><br><span class="line">$ git whatchanged [file]</span><br><span class="line"></span><br><span class="line"># 显示指定文件相关的每一次diff</span><br><span class="line">$ git log -p [file]</span><br><span class="line"></span><br><span class="line"># 显示过去<span class="number">5</span>次提交</span><br><span class="line">$ git log <span class="number">-5</span> --pretty --oneline</span><br><span class="line"></span><br><span class="line"># 显示所有提交过的用户，按提交次数排序</span><br><span class="line">$ git shortlog -sn</span><br><span class="line"></span><br><span class="line"># 显示指定文件是什么人在什么时间修改过</span><br><span class="line">$ git blame [file]</span><br><span class="line"></span><br><span class="line"># 显示暂存区和工作区的差异</span><br><span class="line">$ git diff</span><br><span class="line"></span><br><span class="line"># 显示暂存区和上一个commit的差异</span><br><span class="line">$ git diff --cached [file]</span><br><span class="line"></span><br><span class="line"># 显示工作区与当前分支最新commit之间的差异</span><br><span class="line">$ git diff HEAD</span><br><span class="line"></span><br><span class="line"># 显示两次提交之间的差异</span><br><span class="line">$ git diff [first-branch]...[second-branch]</span><br><span class="line"></span><br><span class="line"># 显示今天你写了多少行代码</span><br><span class="line">$ git diff --shortstat <span class="string">"@&#123;0 day ago&#125;"</span></span><br><span class="line"></span><br><span class="line"># 显示某次提交的元数据和内容变化</span><br><span class="line">$ git show [commit]</span><br><span class="line"></span><br><span class="line"># 显示某次提交发生变化的文件</span><br><span class="line">$ git show --name-only [commit]</span><br><span class="line"></span><br><span class="line"># 显示某次提交时，某个文件的内容</span><br><span class="line">$ git show [commit]:[filename]</span><br><span class="line"></span><br><span class="line"># 显示当前分支的最近几次提交</span><br><span class="line">$ git reflog</span><br></pre></td></tr></table></figure>
-
-<h3 id="八、远程同步"><a href="#八、远程同步" class="headerlink" title="八、远程同步"></a>八、远程同步</h3><hr>
-<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"># 下载远程仓库的所有变动</span><br><span class="line">$ git fetch [remote]</span><br><span class="line"></span><br><span class="line"># 显示所有远程仓库</span><br><span class="line">$ git remote -v</span><br><span class="line"></span><br><span class="line"># 显示某个远程仓库的信息</span><br><span class="line">$ git remote show [remote]</span><br><span class="line"></span><br><span class="line"># 增加一个新的远程仓库，并命名</span><br><span class="line">$ git remote add [shortname] [url]</span><br><span class="line"></span><br><span class="line"># 取回远程仓库的变化，并与本地分支合并</span><br><span class="line">$ git pull [remote] [branch]</span><br><span class="line"></span><br><span class="line"># 上传本地指定分支到远程仓库</span><br><span class="line">$ git push [remote] [branch]</span><br><span class="line"></span><br><span class="line"># 强行推送当前分支到远程仓库，即使有冲突</span><br><span class="line">$ git push [remote] --force</span><br><span class="line"></span><br><span class="line"># 推送所有分支到远程仓库</span><br><span class="line">$ git push [remote] --all</span><br><span class="line"></span><br><span class="line"># 同步远程分支（可以用来删除本地不存在的远程分支）</span><br><span class="line">$ git pull -p</span><br><span class="line"># 等同于👇</span><br><span class="line">$ git fetch -p</span><br><span class="line">$ git fetch --prune origin</span><br></pre></td></tr></table></figure>
-
-<h3 id="九、撤销"><a href="#九、撤销" class="headerlink" title="九、撤销"></a>九、撤销</h3><hr>
-<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"># 恢复暂存区的指定文件到工作区</span><br><span class="line">$ git checkout [file]</span><br><span class="line"></span><br><span class="line"># 恢复某个commit的指定文件到暂存区和工作区</span><br><span class="line">$ git checkout [commit] [file]</span><br><span class="line"></span><br><span class="line"># 恢复暂存区的所有文件到工作区</span><br><span class="line">$ git checkout .</span><br><span class="line"></span><br><span class="line"># 重置暂存区的指定文件，与上一次commit保持一致，但工作区不变</span><br><span class="line">$ git reset [file]</span><br><span class="line"></span><br><span class="line"># 重置暂存区与工作区，与上一次commit保持一致</span><br><span class="line">$ git reset --hard</span><br><span class="line"></span><br><span class="line"># 重置当前分支的指针为指定commit，同时重置暂存区，但工作区不变</span><br><span class="line">$ git reset [commit]</span><br><span class="line"></span><br><span class="line"># 重置当前分支的HEAD为指定commit，同时重置暂存区和工作区，与指定commit一致</span><br><span class="line">$ git reset --hard [commit]</span><br><span class="line"></span><br><span class="line"># 重置当前HEAD为指定commit，但保持暂存区和工作区不变</span><br><span class="line">$ git reset --keep [commit]</span><br><span class="line"></span><br><span class="line"># 新建一个commit，用来撤销指定commit</span><br><span class="line"># 后者的所有变化都将被前者抵消，并且应用到当前分支</span><br><span class="line">$ git revert [commit]</span><br><span class="line"></span><br><span class="line"># 暂时将未提交的变化移除，稍后再移入</span><br><span class="line">$ git stash</span><br><span class="line">$ git stash pop</span><br></pre></td></tr></table></figure>
-
-<h3 id="十、其他"><a href="#十、其他" class="headerlink" title="十、其他"></a>十、其他</h3><hr>
-<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"># 生成一个可供发布的压缩包</span><br><span class="line">$ git archive</span><br></pre></td></tr></table></figure>
-
-<h3 id="一、撤销当前commit，并将改动恢复到缓存区"><a href="#一、撤销当前commit，并将改动恢复到缓存区" class="headerlink" title="一、撤销当前commit，并将改动恢复到缓存区"></a>一、撤销当前commit，并将改动恢复到缓存区</h3><hr>
-<pre><code class="Swift"># <span class="number">1</span>.先查看历史提交记录：
-$ git log --pretty=oneline
-
-# <span class="number">2</span>.回退到上次提交，并且保留修改(**hard将会丢弃更改!**) 
-$ git reset --soft 319c879dc5ff2d18d71164523c2009da6bcf2011
-
-# <span class="number">3</span>.暂存修改
-$ git  stash
-
-# <span class="number">4</span>.切换分支
-$ git checkout -b 分支名
-
-# <span class="number">5</span>.查看所有的贮藏（只有一个贮藏 可以使用 git stash pop 恢复）
-$ git stash list</code></pre>
-]]></content>
-      <categories>
-        <category>Tools</category>
-      </categories>
-      <tags>
-        <tag>Git</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>单例block引发的思考</title>
-    <url>/2018/03/24/%E5%8D%95%E4%BE%8Bblock%E5%BC%95%E5%8F%91%E7%9A%84%E6%80%9D%E8%80%83/</url>
-    <content><![CDATA[<!-- toc -->
-
-<p>AFNetworking 框架中的 AFNetworkReachabilityManager 可以用来监听网络状态的变化，经常这样使用：</p>
-<a id="more"></a>
-
-<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">[[AFNetworkReachabilityManager sharedManager] setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status) &#123;</span><br><span class="line">    <span class="comment">// code...</span></span><br><span class="line">&#125;];</span><br></pre></td></tr></table></figure>
-
-<p>查看源码，会发现 setReachabilityStatusChangeBlock 方法只是单纯的将 block 赋值给了一个普通变量，这说明 block 有被覆盖的风险。</p>
-<h2 id="思考：如何避免单例的block被覆盖"><a href="#思考：如何避免单例的block被覆盖" class="headerlink" title="思考：如何避免单例的block被覆盖"></a>思考：如何避免单例的block被覆盖</h2><p>AFNetworking 的 issue 中也有人提出相同的问题，目前有2种解决方案：</p>
-<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">在block的回调中发通知</span><br><span class="line">AFNetworking3<span class="number">.0</span> 作者新增了一个 manager 类方法，可以创建一个新的 AFNetworkReachabilityManager 对象，这样就不会造成block被覆盖了</span><br></pre></td></tr></table></figure>
-
-<p>不使用上面2种办法，有没有别的方法可以避免block被覆盖呢？</p>
-<h2 id="集合"><a href="#集合" class="headerlink" title="集合"></a>集合</h2><p><strong>block被覆盖的原因：单例 + 使用普通对象接收block</strong><br>那么可以选择用集合来接收block，选择集合需要考虑2点：</p>
-<ul>
-<li>1、有序/无序</li>
-<li>2、strong/weak</li>
-</ul>
-<p>此处使用有序集合貌似没什么用，使用 strong 的话也就是 NSMutableDictionary ，那么会引入一个新的问题：何时释放 block 呢？那么可以使用 NSMapTable ？将 key 设置为 NSPointerFunctionsWeakMemory ，那么就不用我们手动去释放了</p>
-<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)addNetworkStatusCallback:(dispatch_block_t)callback &#123;</span><br><span class="line">    [<span class="keyword">self</span>.table setObject:callback forKey:<span class="string">@"UUID"</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>但是由于key是局部变量，所以出了方法后block仍然会被释放，所以得思考到底由谁来持有block。</li>
-<li>根据设计原则：谁注册回调就由谁来管理block，单例仅仅只维护 管理者 与 block 的映射关系。 </li>
-</ul>
-<h2 id="Associated-Object"><a href="#Associated-Object" class="headerlink" title="Associated Object"></a>Associated Object</h2><p>通过关联对象技术将 callback 绑定给 observer，而单例的 NSMapTable 中，key 和 value 都是 weak，仅需要维护 observer 与 callback 的映射关系即可，结构如下：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &lt;viewController&gt;: &lt;callback&gt;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>单例中实现相应方法：</p>
-<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)addObserver:(<span class="keyword">id</span>)observer callback:(dispatch_block_t)callback &#123;</span><br><span class="line">    [<span class="keyword">self</span>.table setObject:callback forKey:observer];</span><br><span class="line">    <span class="built_in">NSString</span> *key = [[<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"%p"</span>, &amp;observer] UTF8String];</span><br><span class="line">    objc_setAssociatedObject(observer, key, callback, OBJC_ASSOCIATION_COPY_NONATOMIC);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>在 viewController 中可以这样使用 ：</p>
-<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">[[ObserverSingleton shareInstance] addObserver:<span class="keyword">self</span> callback:^&#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"status callback"</span>);</span><br><span class="line">&#125;];</span><br></pre></td></tr></table></figure>
-
-<p>移除操作</p>
-<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)removeObserver:(<span class="keyword">id</span>)observer &#123;</span><br><span class="line">    [<span class="keyword">self</span>.table removeObjectForKey:observer];</span><br><span class="line">    <span class="built_in">NSString</span> *key = [[<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"%p"</span>, &amp;observer] UTF8String];</span><br><span class="line">    objc_setAssociatedObject(observer, key, <span class="literal">nil</span>, OBJC_ASSOCIATION_COPY_NONATOMIC);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>其实这样处理有一个弊端：使用者很容易觉得 self 与 callback 没有引用关系，实际上得使用weakSelf 才能避免循环引用。</p>
-]]></content>
-      <categories>
-        <category>Objective-C</category>
-      </categories>
-      <tags>
-        <tag>block</tag>
       </tags>
   </entry>
   <entry>
@@ -972,30 +797,80 @@ $ git stash list</code></pre>
       </tags>
   </entry>
   <entry>
-    <title>解决Hexo神烦的Error:Cannot-find-module</title>
-    <url>/2017/05/26/%E8%A7%A3%E5%86%B3Hexo%E7%A5%9E%E7%83%A6%E7%9A%84Error-Cannot-find-module/</url>
-    <content><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>自从GitHub被微软给收购了，GitHub打开巨慢，无奈只好爬梯子，访问上是没啥问题了，但是clone、push等操作有时候速度为 0kb/s… 简直不能忍… 最近发现<code>hexo deploy</code>老半天也没反应，梯子竟然也不管用，尝试了多种办法，如：删除<code>.deploy_git</code>然后重新生成、更新git版本、npm重装、hexo重装、给http/https请求挂代理等等… 竟然都不管用! 不仅问题没解决，还导致hexo命令出现了神烦的错误提示…</p>
-<h3 id="错误长这样"><a href="#错误长这样" class="headerlink" title="错误长这样"></a>错误长这样</h3><figure class="highlight js"><table><tr><td class="code"><pre><span class="line">&#123; [<span class="built_in">Error</span>: Cannot find <span class="built_in">module</span> <span class="string">'./build/Release/DTraceProviderBindings'</span>] code: <span class="string">'MODULE_NOT_FOUND'</span> &#125;</span><br><span class="line">&#123; [<span class="built_in">Error</span>: Cannot find <span class="built_in">module</span> <span class="string">'./build/default/DTraceProviderBindings'</span>] code: <span class="string">'MODULE_NOT_FOUND'</span> &#125;</span><br><span class="line">&#123; [<span class="built_in">Error</span>: Cannot find <span class="built_in">module</span> <span class="string">'./build/Debug/DTraceProviderBindings'</span>] code: <span class="string">'MODULE_NOT_FOUND'</span> &#125;</span><br></pre></td></tr></table></figure>
+    <title>单例block引发的思考</title>
+    <url>/2018/03/24/%E5%8D%95%E4%BE%8Bblock%E5%BC%95%E5%8F%91%E7%9A%84%E6%80%9D%E8%80%83/</url>
+    <content><![CDATA[<!-- toc -->
 
-<h3 id="解决办法"><a href="#解决办法" class="headerlink" title="解决办法"></a>解决办法</h3><p>1.hexo官方也给出了解决办法:</p>
-<blockquote>
-<p>npm install hexo –no-optional</p>
-</blockquote>
-<p>好吧，对于我这边不管用！</p>
-<p>那么我只能彻底一点了！</p>
-<p>2.我的解决办法： </p>
-<p>卸载掉hexo，重新安装</p>
-<blockquote>
-<p>npm uninstall hexo<br>npm install hexo –no-optional</p>
-</blockquote>
-<p>卸载掉hexo-cli，重新安装</p>
-<blockquote>
-<p>npm uninstall hexo-cli -g<br>npm install hexo-cli -g</p>
-</blockquote>
-<p>再来试试hexo命令，我这边已经不提示错误了XD</p>
+<p>AFNetworking 框架中的 AFNetworkReachabilityManager 可以用来监听网络状态的变化，经常这样使用：</p>
+<a id="more"></a>
+
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">[[AFNetworkReachabilityManager sharedManager] setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status) &#123;</span><br><span class="line">    <span class="comment">// code...</span></span><br><span class="line">&#125;];</span><br></pre></td></tr></table></figure>
+
+<p>查看源码，会发现 setReachabilityStatusChangeBlock 方法只是单纯的将 block 赋值给了一个普通变量，这说明 block 有被覆盖的风险。</p>
+<h2 id="思考：如何避免单例的block被覆盖"><a href="#思考：如何避免单例的block被覆盖" class="headerlink" title="思考：如何避免单例的block被覆盖"></a>思考：如何避免单例的block被覆盖</h2><p>AFNetworking 的 issue 中也有人提出相同的问题，目前有2种解决方案：</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">在block的回调中发通知</span><br><span class="line">AFNetworking3<span class="number">.0</span> 作者新增了一个 manager 类方法，可以创建一个新的 AFNetworkReachabilityManager 对象，这样就不会造成block被覆盖了</span><br></pre></td></tr></table></figure>
+
+<p>不使用上面2种办法，有没有别的方法可以避免block被覆盖呢？</p>
+<h2 id="集合"><a href="#集合" class="headerlink" title="集合"></a>集合</h2><p><strong>block被覆盖的原因：单例 + 使用普通对象接收block</strong><br>那么可以选择用集合来接收block，选择集合需要考虑2点：</p>
+<ul>
+<li>1、有序/无序</li>
+<li>2、strong/weak</li>
+</ul>
+<p>此处使用有序集合貌似没什么用，使用 strong 的话也就是 NSMutableDictionary ，那么会引入一个新的问题：何时释放 block 呢？那么可以使用 NSMapTable ？将 key 设置为 NSPointerFunctionsWeakMemory ，那么就不用我们手动去释放了</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)addNetworkStatusCallback:(dispatch_block_t)callback &#123;</span><br><span class="line">    [<span class="keyword">self</span>.table setObject:callback forKey:<span class="string">@"UUID"</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>但是由于key是局部变量，所以出了方法后block仍然会被释放，所以得思考到底由谁来持有block。</li>
+<li>根据设计原则：谁注册回调就由谁来管理block，单例仅仅只维护 管理者 与 block 的映射关系。 </li>
+</ul>
+<h2 id="Associated-Object"><a href="#Associated-Object" class="headerlink" title="Associated Object"></a>Associated Object</h2><p>通过关联对象技术将 callback 绑定给 observer，而单例的 NSMapTable 中，key 和 value 都是 weak，仅需要维护 observer 与 callback 的映射关系即可，结构如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &lt;viewController&gt;: &lt;callback&gt;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>单例中实现相应方法：</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)addObserver:(<span class="keyword">id</span>)observer callback:(dispatch_block_t)callback &#123;</span><br><span class="line">    [<span class="keyword">self</span>.table setObject:callback forKey:observer];</span><br><span class="line">    <span class="built_in">NSString</span> *key = [[<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"%p"</span>, &amp;observer] UTF8String];</span><br><span class="line">    objc_setAssociatedObject(observer, key, callback, OBJC_ASSOCIATION_COPY_NONATOMIC);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在 viewController 中可以这样使用 ：</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">[[ObserverSingleton shareInstance] addObserver:<span class="keyword">self</span> callback:^&#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"status callback"</span>);</span><br><span class="line">&#125;];</span><br></pre></td></tr></table></figure>
+
+<p>移除操作</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)removeObserver:(<span class="keyword">id</span>)observer &#123;</span><br><span class="line">    [<span class="keyword">self</span>.table removeObjectForKey:observer];</span><br><span class="line">    <span class="built_in">NSString</span> *key = [[<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"%p"</span>, &amp;observer] UTF8String];</span><br><span class="line">    objc_setAssociatedObject(observer, key, <span class="literal">nil</span>, OBJC_ASSOCIATION_COPY_NONATOMIC);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其实这样处理有一个弊端：使用者很容易觉得 self 与 callback 没有引用关系，实际上得使用weakSelf 才能避免循环引用。</p>
 ]]></content>
+      <categories>
+        <category>Objective-C</category>
+      </categories>
       <tags>
-        <tag>hexo</tag>
+        <tag>block</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>macOS Catalina 10.15 安装 CocoaPods 步骤</title>
+    <url>/2020/03/24/macOS-Catalina-10-15-%E5%AE%89%E8%A3%85-CocoaPods-%E6%AD%A5%E9%AA%A4/</url>
+    <content><![CDATA[<!-- toc -->
+
+<h5 id="1-检查电脑上的-CocoaPods-版本"><a href="#1-检查电脑上的-CocoaPods-版本" class="headerlink" title="1. 检查电脑上的 CocoaPods 版本"></a>1. 检查电脑上的 CocoaPods 版本</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">pod --version</span><br></pre></td></tr></table></figure>
+<p>输出：zsh: command not found: pod  好的 你果然没有安装CocoaPods</p>
+<a id="more"></a>
+
+<h5 id="2-看下ruby版本"><a href="#2-看下ruby版本" class="headerlink" title="2. 看下ruby版本"></a>2. 看下ruby版本</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ruby -v</span><br></pre></td></tr></table></figure>
+<p>输出：ruby 2.6.3p62 (2019-04-16 revision 67580) [universal.x86_64-darwin19]</p>
+<h5 id="3-查看当前安装的gem源"><a href="#3-查看当前安装的gem源" class="headerlink" title="3. 查看当前安装的gem源"></a>3. 查看当前安装的gem源</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">gem sources -l</span><br></pre></td></tr></table></figure>
+<p>输出：<br><strong>* CURRENT SOURCES *</strong><br><a href="https://rubygems.org/" target="_blank" rel="noopener">https://rubygems.org/</a></p>
+<h5 id="4-移除原有的源"><a href="#4-移除原有的源" class="headerlink" title="4. 移除原有的源"></a>4. 移除原有的源</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">gem sources --remove https:&#x2F;&#x2F;rubygems.org&#x2F;</span><br></pre></td></tr></table></figure>
+
+<p>输出：<a href="https://rubygems.org/" target="_blank" rel="noopener">https://rubygems.org/</a> removed from sources<br>移除成功</p>
+<h5 id="5-添加ruby-china的源"><a href="#5-添加ruby-china的源" class="headerlink" title="5. 添加ruby-china的源"></a>5. 添加ruby-china的源</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">gem sources -a https:&#x2F;&#x2F;gems.ruby-china.com&#x2F;</span><br></pre></td></tr></table></figure>
+<p>输出：<a href="https://gems.ruby-china.com/" target="_blank" rel="noopener">https://gems.ruby-china.com/</a> added to sources<br>添加成功</p>
+<h5 id="6-安装"><a href="#6-安装" class="headerlink" title="6. 安装"></a>6. 安装</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo gem install cocoapods</span><br></pre></td></tr></table></figure>
+
+<p>输出结果：… 32 gems installed.<br>安装完成</p>
+]]></content>
+      <categories>
+        <category>iOS</category>
+      </categories>
+      <tags>
+        <tag>CocoaPods</tag>
       </tags>
   </entry>
   <entry>
@@ -1080,6 +955,143 @@ $ git stash list</code></pre>
 <figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 判断一颗二叉树是否为二叉查找树</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">isBinarySearchTree</span><span class="params">(root: TreeNode?)</span></span> -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> _helper(root, <span class="literal">nil</span>, <span class="literal">nil</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">_helper</span><span class="params">(<span class="number">_</span> node: TreeNode?, <span class="number">_</span> <span class="built_in">min</span>: Int?, <span class="number">_</span> <span class="built_in">max</span>: Int?)</span></span> -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line">    <span class="comment">// 处理节点为 nil 的情况</span></span><br><span class="line">    <span class="keyword">guard</span> <span class="keyword">let</span> node = node <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 所有右子节点都必须大于根节点</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">let</span> <span class="built_in">min</span> = <span class="built_in">min</span>, node.val &lt;= <span class="built_in">min</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 所有左子节点都必须小于根节点</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">let</span> <span class="built_in">max</span> = <span class="built_in">max</span>, node.val &gt;= <span class="built_in">max</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> _helper(node.<span class="keyword">left</span>, <span class="built_in">min</span>, node.val) &amp;&amp; _helper(node.<span class="keyword">right</span>, node.val, <span class="built_in">max</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
       <tags>
         <tag>链表 二叉树</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Git常用指令</title>
+    <url>/2018/03/24/Git%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</url>
+    <content><![CDATA[<!-- TOC -->
+
+<h3 id="一、新建仓库"><a href="#一、新建仓库" class="headerlink" title="一、新建仓库"></a>一、新建仓库</h3><hr>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"># 在当前目录新建一个<span class="type">Git</span>仓库</span><br><span class="line">$ git <span class="keyword">init</span></span><br><span class="line"></span><br><span class="line"># 新建一个目录，将其初始化为<span class="type">Git</span>仓库</span><br><span class="line">$ git <span class="keyword">init</span> [project-name]</span><br><span class="line"></span><br><span class="line"># 克隆一个项目</span><br><span class="line">git clone [url]</span><br></pre></td></tr></table></figure>
+
+<a id="more"></a>
+
+<h3 id="二、配置"><a href="#二、配置" class="headerlink" title="二、配置"></a>二、配置</h3><hr>
+<p>Git的设置文件为.gitconfig，它可以在用户主目录下（全局配置），也可以在项目目录下（项目配置）。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"># 显示当前的<span class="type">Git</span>配置</span><br><span class="line">$ git config --list</span><br><span class="line"></span><br><span class="line"># 编辑<span class="type">Git</span>配置文件</span><br><span class="line">$ git config -e [--global]</span><br><span class="line"></span><br><span class="line"># 设置提交代码时的用户信息</span><br><span class="line">$ git config [--global] user.name <span class="string">"[name]"</span></span><br><span class="line">$ git config [--global] user.email <span class="string">"[email address]"</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="三、增加-删除文件"><a href="#三、增加-删除文件" class="headerlink" title="三、增加/删除文件"></a>三、增加/删除文件</h3><hr>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"># 添加指定文件到暂存区</span><br><span class="line">$ git add [file1] [file2] ...</span><br><span class="line"></span><br><span class="line"># 添加指定目录到暂存区（包括子目录）</span><br><span class="line">$ git add [dir]</span><br><span class="line"></span><br><span class="line"># 添加当前目录的所有文件到暂存区</span><br><span class="line">$ git add .</span><br><span class="line"></span><br><span class="line"># 添加每个变化前，都会要求确认</span><br><span class="line"># 对于同一个文件的多处变化，可以实现分次提交</span><br><span class="line">$ git add -p</span><br><span class="line"></span><br><span class="line"># 删除工作区文件，并且将这次删除放入暂存区</span><br><span class="line">$ git rm [file1] [file2] ...</span><br><span class="line"></span><br><span class="line"># 停止追踪指定文件，但该文件会保留在工作区</span><br><span class="line">$ git rm --cached [file]</span><br><span class="line"></span><br><span class="line"># 改名文件，并且将这个改名放入暂存区</span><br><span class="line">$ git mv [file-original] [file-renamed]</span><br></pre></td></tr></table></figure>
+
+<h3 id="四、代码提交"><a href="#四、代码提交" class="headerlink" title="四、代码提交"></a>四、代码提交</h3><hr>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"># 提交暂存区到仓库区</span><br><span class="line">$ git commit -m [message]</span><br><span class="line"></span><br><span class="line"># 提交暂存区的指定文件到仓库区</span><br><span class="line">$ git commit [file1] [file2] ... -m [message]</span><br><span class="line"></span><br><span class="line"># 提交工作区自上次commit之后的变化，直接到仓库区</span><br><span class="line">$ git commit -a</span><br><span class="line"></span><br><span class="line"># 提交时显示所有的diff信息</span><br><span class="line">$ git commit -v</span><br><span class="line"></span><br><span class="line"># 使用一次新的commit，替代上一次提交</span><br><span class="line"># 如果代码没有任何新变化，则用来改写上一次commit的提交信息</span><br><span class="line">$ git commit --amend -m [message]</span><br><span class="line"></span><br><span class="line"># 重做上一次commit，并包括指定文件的新变化</span><br><span class="line">$ git commit --amend [file1] [file2] ...</span><br><span class="line">``` </span><br><span class="line"></span><br><span class="line">### 五、分支</span><br><span class="line">---</span><br><span class="line">```<span class="type">Swift</span></span><br><span class="line"># 查看本地分支列表</span><br><span class="line">$ git branch</span><br><span class="line"></span><br><span class="line"># 查看远程分支列表</span><br><span class="line">$ git branch -r</span><br><span class="line"></span><br><span class="line"># 创建一个新的feature-jx分支并跟踪origin的远程develop分支 (-b表示切换到新建分支)</span><br><span class="line">$ git checkout -b feature-jx origin/develop</span><br><span class="line"></span><br><span class="line"># 将本地的feature-jx分支推送到远程feature分支（远程分支不存在则会创建）</span><br><span class="line">$ git push origin feature-jx:feature</span><br><span class="line"></span><br><span class="line"># 本地分支追踪远程分支</span><br><span class="line">$ git branch --<span class="keyword">set</span>-upstream [branch] [remote-branch]</span><br><span class="line"></span><br><span class="line"># 合并指定分支到当前分支</span><br><span class="line">$ git merge [branch]</span><br><span class="line"></span><br><span class="line"># 选择一个commit，合并进当前分支</span><br><span class="line">$ git cherry-pick [commit]</span><br><span class="line"></span><br><span class="line"># 删除分支</span><br><span class="line">$ git branch -d [branch]</span><br><span class="line"></span><br><span class="line"># 删除远程分支</span><br><span class="line">$ git push origin --delete [branch]</span><br><span class="line">$ git branch -dr [remote/branch]</span><br><span class="line"></span><br><span class="line"># 新建一个分支，指向指定commit</span><br><span class="line">$ git branch [branch] [commit]</span><br><span class="line"></span><br><span class="line"># 新建一个分支，与指定的远程分支建立追踪关系</span><br><span class="line">$ git branch --track [branch] [remote-branch] </span><br><span class="line"></span><br><span class="line"># 同步远程仓库删除状态</span><br><span class="line">$ git remote prune origin</span><br></pre></td></tr></table></figure>
+
+<h3 id="六、标签"><a href="#六、标签" class="headerlink" title="六、标签"></a>六、标签</h3><hr>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"># 列出所有tag </span><br><span class="line">$ git tag</span><br><span class="line"></span><br><span class="line"># 新建一个tag在当前的commit</span><br><span class="line">$ git tag [tag]</span><br><span class="line"></span><br><span class="line"># 新建一个tag在指定的commit </span><br><span class="line">$ git tag [tag] [commit]</span><br><span class="line"></span><br><span class="line"># 删除本地tag</span><br><span class="line">$ git tag -d [tag]</span><br><span class="line"></span><br><span class="line"># 删除远程tag(推一个空的到对应的tag)</span><br><span class="line">$ git push origin :refs/tags/[tagName]</span><br><span class="line"></span><br><span class="line"># 查看tag信息</span><br><span class="line">$ git show [tag]</span><br><span class="line"></span><br><span class="line"># 提交指定tag</span><br><span class="line">$ git push [remote] [tag]</span><br><span class="line"></span><br><span class="line"># 提交所有tag</span><br><span class="line">$ git push [remote] --tags</span><br><span class="line"></span><br><span class="line"># 新建一个分支，指向某个tag</span><br><span class="line">$ git checkout -b [brach] [tag]</span><br></pre></td></tr></table></figure>
+
+<h3 id="七、查看信息"><a href="#七、查看信息" class="headerlink" title="七、查看信息"></a>七、查看信息</h3><hr>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"># 显示有变更的文件</span><br><span class="line">$ git status</span><br><span class="line"></span><br><span class="line"># 显示当前分支的版本历史</span><br><span class="line">$ git log</span><br><span class="line"></span><br><span class="line"># 显示commit历史，以及每次commit发生变更的文件</span><br><span class="line">$ git log --stat</span><br><span class="line"></span><br><span class="line"># 搜索提交历史，根据关键词</span><br><span class="line">$ git log -S [keyword]</span><br><span class="line"></span><br><span class="line"># 显示某个commit之后的所有变动，每个commit占据一行</span><br><span class="line">$ git log [tag] HEAD --pretty=format:%s</span><br><span class="line"></span><br><span class="line"># 显示某个commit之后的所有变动，其<span class="string">"提交说明"</span>必须符合搜索条件</span><br><span class="line">$ git log [tag] HEAD --grep feature</span><br><span class="line"></span><br><span class="line"># 显示某个文件的版本历史，包括文件改名</span><br><span class="line">$ git log --follow [file]</span><br><span class="line">$ git whatchanged [file]</span><br><span class="line"></span><br><span class="line"># 显示指定文件相关的每一次diff</span><br><span class="line">$ git log -p [file]</span><br><span class="line"></span><br><span class="line"># 显示过去<span class="number">5</span>次提交</span><br><span class="line">$ git log <span class="number">-5</span> --pretty --oneline</span><br><span class="line"></span><br><span class="line"># 显示所有提交过的用户，按提交次数排序</span><br><span class="line">$ git shortlog -sn</span><br><span class="line"></span><br><span class="line"># 显示指定文件是什么人在什么时间修改过</span><br><span class="line">$ git blame [file]</span><br><span class="line"></span><br><span class="line"># 显示暂存区和工作区的差异</span><br><span class="line">$ git diff</span><br><span class="line"></span><br><span class="line"># 显示暂存区和上一个commit的差异</span><br><span class="line">$ git diff --cached [file]</span><br><span class="line"></span><br><span class="line"># 显示工作区与当前分支最新commit之间的差异</span><br><span class="line">$ git diff HEAD</span><br><span class="line"></span><br><span class="line"># 显示两次提交之间的差异</span><br><span class="line">$ git diff [first-branch]...[second-branch]</span><br><span class="line"></span><br><span class="line"># 显示今天你写了多少行代码</span><br><span class="line">$ git diff --shortstat <span class="string">"@&#123;0 day ago&#125;"</span></span><br><span class="line"></span><br><span class="line"># 显示某次提交的元数据和内容变化</span><br><span class="line">$ git show [commit]</span><br><span class="line"></span><br><span class="line"># 显示某次提交发生变化的文件</span><br><span class="line">$ git show --name-only [commit]</span><br><span class="line"></span><br><span class="line"># 显示某次提交时，某个文件的内容</span><br><span class="line">$ git show [commit]:[filename]</span><br><span class="line"></span><br><span class="line"># 显示当前分支的最近几次提交</span><br><span class="line">$ git reflog</span><br></pre></td></tr></table></figure>
+
+<h3 id="八、远程同步"><a href="#八、远程同步" class="headerlink" title="八、远程同步"></a>八、远程同步</h3><hr>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"># 下载远程仓库的所有变动</span><br><span class="line">$ git fetch [remote]</span><br><span class="line"></span><br><span class="line"># 显示所有远程仓库</span><br><span class="line">$ git remote -v</span><br><span class="line"></span><br><span class="line"># 显示某个远程仓库的信息</span><br><span class="line">$ git remote show [remote]</span><br><span class="line"></span><br><span class="line"># 增加一个新的远程仓库，并命名</span><br><span class="line">$ git remote add [shortname] [url]</span><br><span class="line"></span><br><span class="line"># 取回远程仓库的变化，并与本地分支合并</span><br><span class="line">$ git pull [remote] [branch]</span><br><span class="line"></span><br><span class="line"># 上传本地指定分支到远程仓库</span><br><span class="line">$ git push [remote] [branch]</span><br><span class="line"></span><br><span class="line"># 强行推送当前分支到远程仓库，即使有冲突</span><br><span class="line">$ git push [remote] --force</span><br><span class="line"></span><br><span class="line"># 推送所有分支到远程仓库</span><br><span class="line">$ git push [remote] --all</span><br><span class="line"></span><br><span class="line"># 同步远程分支（可以用来删除本地不存在的远程分支）</span><br><span class="line">$ git pull -p</span><br><span class="line"># 等同于👇</span><br><span class="line">$ git fetch -p</span><br><span class="line">$ git fetch --prune origin</span><br></pre></td></tr></table></figure>
+
+<h3 id="九、撤销"><a href="#九、撤销" class="headerlink" title="九、撤销"></a>九、撤销</h3><hr>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"># 恢复暂存区的指定文件到工作区</span><br><span class="line">$ git checkout [file]</span><br><span class="line"></span><br><span class="line"># 恢复某个commit的指定文件到暂存区和工作区</span><br><span class="line">$ git checkout [commit] [file]</span><br><span class="line"></span><br><span class="line"># 恢复暂存区的所有文件到工作区</span><br><span class="line">$ git checkout .</span><br><span class="line"></span><br><span class="line"># 重置暂存区的指定文件，与上一次commit保持一致，但工作区不变</span><br><span class="line">$ git reset [file]</span><br><span class="line"></span><br><span class="line"># 重置暂存区与工作区，与上一次commit保持一致</span><br><span class="line">$ git reset --hard</span><br><span class="line"></span><br><span class="line"># 重置当前分支的指针为指定commit，同时重置暂存区，但工作区不变</span><br><span class="line">$ git reset [commit]</span><br><span class="line"></span><br><span class="line"># 重置当前分支的HEAD为指定commit，同时重置暂存区和工作区，与指定commit一致</span><br><span class="line">$ git reset --hard [commit]</span><br><span class="line"></span><br><span class="line"># 重置当前HEAD为指定commit，但保持暂存区和工作区不变</span><br><span class="line">$ git reset --keep [commit]</span><br><span class="line"></span><br><span class="line"># 新建一个commit，用来撤销指定commit</span><br><span class="line"># 后者的所有变化都将被前者抵消，并且应用到当前分支</span><br><span class="line">$ git revert [commit]</span><br><span class="line"></span><br><span class="line"># 暂时将未提交的变化移除，稍后再移入</span><br><span class="line">$ git stash</span><br><span class="line">$ git stash pop</span><br></pre></td></tr></table></figure>
+
+<h3 id="十、其他"><a href="#十、其他" class="headerlink" title="十、其他"></a>十、其他</h3><hr>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"># 生成一个可供发布的压缩包</span><br><span class="line">$ git archive</span><br></pre></td></tr></table></figure>
+
+<h3 id="一、撤销当前commit，并将改动恢复到缓存区"><a href="#一、撤销当前commit，并将改动恢复到缓存区" class="headerlink" title="一、撤销当前commit，并将改动恢复到缓存区"></a>一、撤销当前commit，并将改动恢复到缓存区</h3><hr>
+<pre><code class="Swift"># <span class="number">1</span>.先查看历史提交记录：
+$ git log --pretty=oneline
+
+# <span class="number">2</span>.回退到上次提交，并且保留修改(**hard将会丢弃更改!**) 
+$ git reset --soft 319c879dc5ff2d18d71164523c2009da6bcf2011
+
+# <span class="number">3</span>.暂存修改
+$ git  stash
+
+# <span class="number">4</span>.切换分支
+$ git checkout -b 分支名
+
+# <span class="number">5</span>.查看所有的贮藏（只有一个贮藏 可以使用 git stash pop 恢复）
+$ git stash list</code></pre>
+]]></content>
+      <categories>
+        <category>Tools</category>
+      </categories>
+      <tags>
+        <tag>Git</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>CocoaPods相关命令记录</title>
+    <url>/2020/10/22/cocoaPods%E7%9B%B8%E5%85%B3%E5%91%BD%E4%BB%A4%E8%AE%B0%E5%BD%95/</url>
+    <content><![CDATA[<h1 id="CocoaPods相关命令记录"><a href="#CocoaPods相关命令记录" class="headerlink" title="CocoaPods相关命令记录"></a>CocoaPods相关命令记录</h1><p>1.只安装/删除 相关de库</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line">pod install --verbose --no-repo-update</span><br></pre></td></tr></table></figure>
+
+<p>2.更新/删除 指定的库</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line">pod update 库名 --verbose --no-repo-update</span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>CocoaPods</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>iOS集成Sentry捕获异常</title>
+    <url>/2020/02/27/iOS%E9%9B%86%E6%88%90Sentry%E6%8D%95%E8%8E%B7%E5%BC%82%E5%B8%B8/</url>
+    <content><![CDATA[<p><img src="https://i.loli.net/2020/07/27/1C6pm3SeZl5iJEu.png" alt="sentry官网.png"></p>
+<p>iOS端异常捕获常用工具有很多，国内有腾讯的Bugly，国外有Sentry，我们选择了Sentry，因为Sentry是开源的，支持搭建在自己的服务器上（self-hosted）。Sentry提供了三种类型的账号：Developer、Team、Business，Developer是免费的，但功能有限且异常记录最多每个月5k条，推荐自己搭建服务器，这样就不会有记录数量限制了，Sentry官方文档有详细的self-hosted教程，这里不再赘述。</p>
+<a id="more"></a>
+
+<p><a href="https://sentry.io/" target="_blank" rel="noopener">Sentry官网</a>注册完帐后之后会让你选择一个平台，这里我们可以选择Objective-C或Swift：</p>
+<p><img src="https://i.loli.net/2020/07/27/qgKEFRhVdjU4t3S.png" alt="sentry选择@2x.png"></p>
+<p>然后找到项目设置选择Client Keys(DSN)，复制DSN后面代码中需要用到（如果是self-hosted则是Public DSN）；</p>
+<h4 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h4><p>1、使用CocoaPods导入Sentry；<br>2、在AppDelegate的didFinishLaunchingWithOptions:方法中启动Sentry；</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line">- (void)startSentry &#123;</span><br><span class="line">    <span class="type">NSError</span> *error = <span class="literal">nil</span>;</span><br><span class="line">    <span class="comment">// 根据DSN创建SentryClient</span></span><br><span class="line">    <span class="type">SentryClient</span> *client = [[<span class="type">SentryClient</span> alloc] initWithDsn:kSentryDSN didFailWithError:&amp;error];</span><br><span class="line">    <span class="type">SentryClient</span>.sharedClient = client;</span><br><span class="line">    [<span class="type">SentryClient</span>.sharedClient startCrashHandlerWithError:&amp;error];</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (<span class="literal">nil</span> != error) &#123;</span><br><span class="line">        <span class="type">NSLog</span>(@<span class="string">"%@"</span>, error);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Sentry提供了一系列属性，供我们自定义一些信息；</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="type">SentryClient</span>.sharedClient.environment = environment; <span class="comment">// 环境 例如：debug</span></span><br><span class="line">[<span class="type">SentryClient</span>.sharedClient enableAutomaticBreadcrumbTracking]; <span class="comment">// 开启面包屑功能</span></span><br><span class="line"><span class="type">SentryClient</span>.sharedClient.maxBreadcrumbs = <span class="number">30</span>; <span class="comment">// 面包屑最多栈数</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 用户信息</span></span><br><span class="line"><span class="type">SentryUser</span> *user = [[<span class="type">SentryUser</span> alloc] initWithUserId:guid]; <span class="comment">// 日志记录以此区别、归类不同用户</span></span><br><span class="line">user.username = userName;</span><br><span class="line">user.extra = @&#123;@<span class="string">"cellphone"</span>:cellphone&#125;; <span class="comment">// 自定义字段用户信息</span></span><br><span class="line"><span class="type">SentryClient</span>.sharedClient.user = user;</span><br><span class="line"></span><br><span class="line"><span class="type">SentryClient</span>.sharedClient.extra = @&#123;@<span class="string">"other"</span>:otherMsg&#125;; <span class="comment">// 自定义字段信息</span></span><br></pre></td></tr></table></figure>
+
+<p>Sentry也支持自定义异常事件并抛出</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="type">SentryEvent</span> *event = [[<span class="type">SentryEvent</span> alloc] initWithLevel:kSentrySeverityWarning]; <span class="comment">// 指定事件的严重级别 Fatal/Error/Warnig</span></span><br><span class="line">event.message = message; <span class="comment">// 错误信息</span></span><br><span class="line">event.environment = environment;</span><br><span class="line">event.extra =@&#123;@<span class="string">"url"</span>:url,@<span class="string">"code"</span>:@(code),@<span class="string">"param"</span>:param&#125;; <span class="comment">// 自定义字段</span></span><br><span class="line">[<span class="type">SentryClient</span>.sharedClient sendEvent:event withCompletionHandler:^(<span class="type">NSError</span> * _Nullable error) &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="literal">nil</span> != error) &#123;</span><br><span class="line">        <span class="type">NSLog</span>(@<span class="string">"%@"</span>, error);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;];</span><br></pre></td></tr></table></figure>
+<p>至此，iOS端的编码工作已经完成，但是还有重要的一步操作没有做</p>
+<h4 id="上传dSYM文件"><a href="#上传dSYM文件" class="headerlink" title="上传dSYM文件"></a>上传dSYM文件</h4><p>sentry平台创建Token：User Setting —-&gt; Auth Tokens —&gt; Create New Token；创建时按需勾选选项；<br>拿到Token后就可以上传文件了，这里有2种上传方式：</p>
+<ul>
+<li><p>shell脚本上传</p>
+<ol>
+<li>打包后拿到dSYM文件；</li>
+<li>安装sentry-cli：<code>brew install getsentry/tools/sentry-cli</code></li>
+<li>运行脚本：<code>sentry-cli --url URL --auth-token YOUR_TOKEN upload-dif --org YOUR_ORG --project  YOUR_PROJECT   dSYM_PATH --log-level=debug</code>（其中URL如果是sentry服务器则是<a href="https://sentry.io，" target="_blank" rel="noopener">https://sentry.io，</a> 如果是self-hosted则填写自己服务器url）</li>
+</ol>
+</li>
+<li><p>fastlane上传（待补充）</p>
+</li>
+</ul>
+<p>dSYM文件上传成功后，Sentry项目设置中Debug Files就能看到文件了，之后再次捕获crash异常，查看堆栈信息就已经能解析出具体的方法了。</p>
+]]></content>
+      <categories>
+        <category>iOS</category>
+      </categories>
+      <tags>
+        <tag>Tools</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>解决Hexo神烦的Error:Cannot-find-module</title>
+    <url>/2017/05/26/%E8%A7%A3%E5%86%B3Hexo%E7%A5%9E%E7%83%A6%E7%9A%84Error-Cannot-find-module/</url>
+    <content><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>自从GitHub被微软给收购了，GitHub打开巨慢，无奈只好爬梯子，访问上是没啥问题了，但是clone、push等操作有时候速度为 0kb/s… 简直不能忍… 最近发现<code>hexo deploy</code>老半天也没反应，梯子竟然也不管用，尝试了多种办法，如：删除<code>.deploy_git</code>然后重新生成、更新git版本、npm重装、hexo重装、给http/https请求挂代理等等… 竟然都不管用! 不仅问题没解决，还导致hexo命令出现了神烦的错误提示…</p>
+<h3 id="错误长这样"><a href="#错误长这样" class="headerlink" title="错误长这样"></a>错误长这样</h3><figure class="highlight js"><table><tr><td class="code"><pre><span class="line">&#123; [<span class="built_in">Error</span>: Cannot find <span class="built_in">module</span> <span class="string">'./build/Release/DTraceProviderBindings'</span>] code: <span class="string">'MODULE_NOT_FOUND'</span> &#125;</span><br><span class="line">&#123; [<span class="built_in">Error</span>: Cannot find <span class="built_in">module</span> <span class="string">'./build/default/DTraceProviderBindings'</span>] code: <span class="string">'MODULE_NOT_FOUND'</span> &#125;</span><br><span class="line">&#123; [<span class="built_in">Error</span>: Cannot find <span class="built_in">module</span> <span class="string">'./build/Debug/DTraceProviderBindings'</span>] code: <span class="string">'MODULE_NOT_FOUND'</span> &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="解决办法"><a href="#解决办法" class="headerlink" title="解决办法"></a>解决办法</h3><p>1.hexo官方也给出了解决办法:</p>
+<blockquote>
+<p>npm install hexo –no-optional</p>
+</blockquote>
+<p>好吧，对于我这边不管用！</p>
+<p>那么我只能彻底一点了！</p>
+<p>2.我的解决办法： </p>
+<p>卸载掉hexo，重新安装</p>
+<blockquote>
+<p>npm uninstall hexo<br>npm install hexo –no-optional</p>
+</blockquote>
+<p>卸载掉hexo-cli，重新安装</p>
+<blockquote>
+<p>npm uninstall hexo-cli -g<br>npm install hexo-cli -g</p>
+</blockquote>
+<p>再来试试hexo命令，我这边已经不提示错误了XD</p>
+]]></content>
+      <tags>
+        <tag>hexo</tag>
       </tags>
   </entry>
 </search>
